@@ -18,13 +18,13 @@
       font-family: -apple-system, 'PingFang TC', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif;
       background: #f5f0eb;
       min-height: 100vh;
-      padding: 16px;
+      padding: 12px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
     }
     
-    /* ==================== 主容器 - iPad 優化 ==================== */
+    /* ==================== 主容器 ==================== */
     .container {
       max-width: 768px;
       width: 100%;
@@ -32,9 +32,8 @@
       background: #ffffff;
       border-radius: 24px;
       box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-      padding: 24px 24px 32px;
-      min-height: 92vh;
-      position: relative;
+      padding: 20px 20px 28px;
+      min-height: 95vh;
     }
     
     /* ==================== 頂部標題列 ==================== */
@@ -42,52 +41,75 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 18px;
+      padding-bottom: 14px;
       border-bottom: 2px solid #f0ebe6;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     
     .header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     
     .header-icon {
-      font-size: 30px;
+      font-size: 26px;
       line-height: 1;
     }
     
     .header h1 {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: #6b4c3b;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
     }
     
     .header-badge {
       background: #e8ddd0;
       color: #6b4c3b;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       padding: 2px 10px;
       border-radius: 20px;
-      margin-left: 6px;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .staff-info {
+      font-size: 13px;
+      color: #8b7a6b;
+      background: #f5f0eb;
+      padding: 4px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .staff-info .name {
+      font-weight: 600;
+      color: #6b4c3b;
     }
     
     .logout-btn {
-      padding: 10px 22px;
+      padding: 8px 18px;
       background: #f0ebe6;
       border: none;
-      border-radius: 12px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 500;
       color: #6b5544;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
     
     .logout-btn:active {
@@ -107,44 +129,43 @@
     
     .login-page .login-logo {
       font-size: 56px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     
     .login-page h2 {
-      font-size: 28px;
+      font-size: 26px;
       color: #6b4c3b;
       font-weight: 700;
-      margin-bottom: 6px;
     }
     
     .login-page .subtitle {
       color: #a08b7a;
-      font-size: 16px;
-      margin-bottom: 32px;
+      font-size: 15px;
+      margin-bottom: 28px;
     }
     
     .login-form {
       width: 100%;
-      max-width: 380px;
+      max-width: 360px;
     }
     
     .login-form .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
     
     .login-form label {
       display: block;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #6b5544;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     
     .login-form input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 12px 14px;
       border: 2px solid #e8e0d8;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 16px;
       background: #faf8f6;
       transition: border-color 0.2s;
@@ -159,16 +180,16 @@
     
     .login-form .login-btn {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       background: #8b6b4d;
       color: #ffffff;
       border: none;
-      border-radius: 12px;
-      font-size: 18px;
+      border-radius: 10px;
+      font-size: 17px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-top: 8px;
+      margin-top: 6px;
     }
     
     .login-form .login-btn:active {
@@ -184,10 +205,10 @@
     .login-error {
       background: #fde8e8;
       color: #c0392b;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 10px;
       font-size: 14px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: none;
     }
     
@@ -195,18 +216,194 @@
       display: block;
     }
     
+    /* ==================== 搜尋區 ==================== */
+    .search-section {
+      background: #faf8f6;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      border: 1px solid #f0ebe6;
+    }
+    
+    .search-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .search-row .search-input {
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    .search-row .search-input label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #8b7a6b;
+      margin-bottom: 2px;
+    }
+    
+    .search-row .search-input input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e8e0d8;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #ffffff;
+      outline: none;
+      color: #2d2a27;
+      transition: border-color 0.2s;
+    }
+    
+    .search-row .search-input input:focus {
+      border-color: #b8957a;
+    }
+    
+    .search-btn-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    
+    .search-btn {
+      padding: 10px 24px;
+      background: #8b6b4d;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 44px;
+      white-space: nowrap;
+    }
+    
+    .search-btn:active {
+      transform: scale(0.95);
+      background: #6b4c3b;
+    }
+    
+    .search-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .clear-btn {
+      padding: 10px 14px;
+      background: #f0ebe6;
+      color: #6b5544;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      height: 44px;
+      transition: all 0.2s ease;
+    }
+    
+    .clear-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .search-result-info {
+      font-size: 13px;
+      color: #8b7a6b;
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: #f0ebe6;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .search-result-info.show {
+      display: block;
+    }
+    
+    .search-result-info .count {
+      font-weight: 600;
+      color: #6b4c3b;
+    }
+    
+    /* ==================== 會員列表（搜尋結果） ==================== */
+    .member-list {
+      margin-bottom: 14px;
+    }
+    
+    .member-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px solid #f0ebe6;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .member-list-item:active {
+      transform: scale(0.98);
+      background: #f5f0eb;
+    }
+    
+    .member-list-item .info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .member-list-item .info .name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d2a27;
+    }
+    
+    .member-list-item .info .phone {
+      font-size: 13px;
+      color: #8b7a6b;
+    }
+    
+    .member-list-item .info .meta {
+      font-size: 12px;
+      color: #a08b7a;
+    }
+    
+    .member-list-item .arrow {
+      font-size: 18px;
+      color: #b8957a;
+    }
+    
+    .no-result {
+      text-align: center;
+      padding: 30px 20px;
+      color: #a08b7a;
+    }
+    
+    .no-result .icon {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
     /* ==================== 會員資訊卡片 ==================== */
     .member-card {
       background: #faf8f6;
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-bottom: 20px;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
       border: 1px solid #f0ebe6;
+      display: none;
+    }
+    
+    .member-card.show {
+      display: block;
     }
     
     .member-info-row {
       display: flex;
-      padding: 7px 0;
+      padding: 5px 0;
       border-bottom: 1px solid #f0ebe6;
     }
     
@@ -215,9 +412,9 @@
     }
     
     .member-label {
-      width: 90px;
+      width: 80px;
       color: #8b7a6b;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 500;
       flex-shrink: 0;
     }
@@ -225,29 +422,25 @@
     .member-value {
       flex: 1;
       color: #2d2a27;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
       word-break: break-all;
-    }
-    
-    .member-value .highlight {
-      color: #8b6b4d;
     }
     
     /* ==================== Tab 導航 ==================== */
     .tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: 6px;
+      margin-bottom: 14px;
     }
     
     .tab-item {
-      padding: 13px 6px;
+      padding: 11px 4px;
       text-align: center;
       background: #f5f0eb;
-      border-radius: 12px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 500;
       color: #6b5544;
       cursor: pointer;
@@ -264,67 +457,63 @@
       background: #8b6b4d;
       color: #ffffff;
       border-color: #8b6b4d;
-      box-shadow: 0 4px 12px rgba(139, 107, 77, 0.25);
+      box-shadow: 0 3px 10px rgba(139, 107, 77, 0.2);
     }
     
     .tab-item .tab-icon {
       display: block;
-      font-size: 20px;
-      margin-bottom: 2px;
+      font-size: 18px;
+      margin-bottom: 1px;
     }
     
     /* ==================== Tab 內容區 ==================== */
     .tab-content {
       background: #faf8f6;
-      border-radius: 16px;
-      padding: 16px 16px 20px;
-      min-height: 320px;
+      border-radius: 14px;
+      padding: 14px 14px 18px;
+      min-height: 250px;
       border: 1px solid #f0ebe6;
     }
     
     .tab-content .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 16px;
       color: #a08b7a;
     }
     
     .tab-content .empty-state .empty-icon {
-      font-size: 48px;
+      font-size: 40px;
       display: block;
-      margin-bottom: 12px;
-    }
-    
-    .tab-content .empty-state p {
-      font-size: 15px;
+      margin-bottom: 8px;
     }
     
     /* ==================== 會員資料頁 ==================== */
     .profile-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     
     .profile-item {
       background: #ffffff;
-      padding: 14px 16px;
-      border-radius: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
       border: 1px solid #f0ebe6;
     }
     
     .profile-item .label {
-      font-size: 12px;
+      font-size: 11px;
       color: #a08b7a;
       font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
     
     .profile-item .value {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
       color: #2d2a27;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     
     .profile-item .value.points {
@@ -344,26 +533,26 @@
     .record-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
-      min-width: 500px;
+      font-size: 13px;
+      min-width: 420px;
     }
     
     .record-table th {
       text-align: left;
-      padding: 10px 8px;
+      padding: 8px 6px;
       color: #8b7a6b;
       font-weight: 600;
       border-bottom: 2px solid #e8e0d8;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
     
     .record-table td {
-      padding: 10px 8px;
+      padding: 8px 6px;
       border-bottom: 1px solid #f0ebe6;
       color: #2d2a27;
-      font-size: 14px;
+      font-size: 13px;
     }
     
     .record-table tr:last-child td {
@@ -380,7 +569,7 @@
       color: #6b4c3b;
       padding: 2px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       display: inline-block;
     }
@@ -389,56 +578,56 @@
     .points-summary {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
     
     .points-card {
       background: #ffffff;
-      padding: 16px;
-      border-radius: 12px;
+      padding: 14px;
+      border-radius: 10px;
       border: 1px solid #f0ebe6;
       text-align: center;
     }
     
     .points-card .number {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
       color: #8b6b4d;
     }
     
     .points-card .label {
-      font-size: 13px;
+      font-size: 12px;
       color: #a08b7a;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     
     .points-bar-wrap {
       background: #ffffff;
-      padding: 16px 18px;
-      border-radius: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
       border: 1px solid #f0ebe6;
     }
     
     .points-bar-wrap .bar-label {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
+      font-size: 13px;
       color: #6b5544;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     
     .points-bar {
-      height: 8px;
+      height: 6px;
       background: #f0ebe6;
-      border-radius: 4px;
+      border-radius: 3px;
       overflow: hidden;
     }
     
     .points-bar-fill {
       height: 100%;
       background: linear-gradient(90deg, #d4a373, #8b6b4d);
-      border-radius: 4px;
+      border-radius: 3px;
       transition: width 0.6s ease;
       width: 0%;
     }
@@ -447,28 +636,30 @@
     .coupon-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     
     .coupon-item {
       background: #ffffff;
-      padding: 14px 18px;
-      border-radius: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
       border: 1px solid #f0ebe6;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
     
     .coupon-item .coupon-name {
       font-weight: 600;
       color: #2d2a27;
-      font-size: 15px;
+      font-size: 14px;
     }
     
     .coupon-item .coupon-status {
-      font-size: 13px;
-      padding: 4px 14px;
+      font-size: 12px;
+      padding: 3px 12px;
       border-radius: 20px;
       font-weight: 500;
     }
@@ -489,8 +680,9 @@
     }
     
     .coupon-item .coupon-expire {
-      font-size: 12px;
+      font-size: 11px;
       color: #a08b7a;
+      width: 100%;
     }
     
     /* ==================== 載入動畫 ==================== */
@@ -498,13 +690,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 40px 0;
+      padding: 30px 0;
     }
     
     .spinner {
-      width: 36px;
-      height: 36px;
-      border: 4px solid #f0ebe6;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #f0ebe6;
       border-top-color: #8b6b4d;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -514,119 +706,54 @@
       to { transform: rotate(360deg); }
     }
     
-    /* ==================== 響應式調整 ==================== */
+    /* ==================== 響應式 ==================== */
     @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
+      body { padding: 8px; }
+      .container { padding: 14px; border-radius: 16px; }
       
-      .container {
-        padding: 16px 16px 24px;
-        border-radius: 16px;
-        min-height: 96vh;
-      }
+      .header h1 { font-size: 19px; }
+      .header-icon { font-size: 22px; }
+      .staff-info { font-size: 11px; padding: 3px 10px; }
+      .logout-btn { padding: 6px 12px; font-size: 12px; }
       
-      .header h1 {
-        font-size: 20px;
-      }
+      .search-row { flex-direction: column; gap: 8px; }
+      .search-row .search-input { min-width: 100%; }
+      .search-btn-wrap { width: 100%; }
+      .search-btn { flex: 1; justify-content: center; }
       
-      .header-icon {
-        font-size: 24px;
-      }
+      .tabs { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+      .tab-item { padding: 8px 4px; font-size: 12px; }
+      .tab-item .tab-icon { font-size: 16px; }
       
-      .logout-btn {
-        padding: 8px 14px;
-        font-size: 13px;
-      }
+      .profile-grid { grid-template-columns: 1fr; }
+      .points-summary { grid-template-columns: 1fr 1fr; }
       
-      .tabs {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
-      }
+      .member-label { width: 65px; font-size: 12px; }
+      .member-value { font-size: 14px; }
       
-      .tab-item {
-        padding: 10px 4px;
-        font-size: 13px;
-      }
+      .login-page h2 { font-size: 22px; }
+      .login-form { max-width: 100%; }
       
-      .tab-item .tab-icon {
-        font-size: 18px;
-      }
-      
-      .profile-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .points-summary {
-        grid-template-columns: 1fr 1fr;
-      }
-      
-      .member-label {
-        width: 70px;
-        font-size: 13px;
-      }
-      
-      .member-value {
-        font-size: 15px;
-      }
-      
-      .login-page h2 {
-        font-size: 22px;
-      }
-      
-      .login-form {
-        max-width: 100%;
-      }
-      
-      .record-table {
-        font-size: 13px;
-        min-width: 400px;
-      }
-      
-      .record-table th,
-      .record-table td {
-        padding: 8px 6px;
-      }
+      .record-table { font-size: 12px; min-width: 340px; }
+      .record-table th, .record-table td { padding: 6px 4px; }
     }
     
     @media (max-width: 400px) {
-      .container {
-        padding: 12px 12px 20px;
-      }
+      .container { padding: 10px; }
+      .header h1 { font-size: 16px; }
+      .header-badge { font-size: 9px; padding: 1px 8px; }
+      .staff-info { font-size: 10px; padding: 2px 8px; }
+      .logout-btn { padding: 4px 10px; font-size: 11px; }
       
-      .header h1 {
-        font-size: 17px;
-      }
-      
-      .logout-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-      }
-      
-      .points-summary {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-      
-      .points-card .number {
-        font-size: 24px;
-      }
+      .points-summary { grid-template-columns: 1fr 1fr; gap: 6px; }
+      .points-card .number { font-size: 22px; }
+      .points-card { padding: 10px; }
     }
     
-    /* ==================== iPad 橫式 ==================== */
     @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-      .container {
-        max-width: 900px;
-        padding: 28px 32px;
-      }
-      
-      .profile-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      
-      .points-summary {
-        grid-template-columns: repeat(4, 1fr);
-      }
+      .container { max-width: 900px; padding: 24px 28px; }
+      .profile-grid { grid-template-columns: repeat(3, 1fr); }
+      .points-summary { grid-template-columns: repeat(4, 1fr); }
     }
   </style>
 </head>
@@ -641,9 +768,15 @@
       <h1>老娘領地</h1>
       <span class="header-badge">查詢</span>
     </div>
-    <button class="logout-btn" id="logoutBtn" style="display:none;">
-      <span>🚪</span> 登出
-    </button>
+    <div class="header-right">
+      <span class="staff-info" id="staffInfo" style="display:none;">
+        👤 <span class="name" id="staffName">-</span>
+        <span id="staffBranch" style="color:#a08b7a;font-weight:400;"></span>
+      </span>
+      <button class="logout-btn" id="logoutBtn" style="display:none;">
+        🚪 登出
+      </button>
+    </div>
   </div>
   
   <!-- ====== 登入頁面 ====== -->
@@ -672,7 +805,31 @@
   <!-- ====== 主要內容（登入後顯示） ====== -->
   <div id="mainContent" style="display:none;">
     
-    <!-- 會員資訊卡片 -->
+    <!-- ====== 搜尋區 ====== -->
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-input">
+          <label>👤 姓名</label>
+          <input type="text" id="searchName" placeholder="輸入會員姓名" autocomplete="off">
+        </div>
+        <div class="search-input">
+          <label>📱 電話</label>
+          <input type="text" id="searchPhone" placeholder="輸入會員電話" autocomplete="off">
+        </div>
+        <div class="search-btn-wrap">
+          <button class="search-btn" id="searchBtn">🔍 查詢</button>
+          <button class="clear-btn" id="clearBtn">✕</button>
+        </div>
+      </div>
+      <div class="search-result-info" id="searchResultInfo">
+        找到 <span class="count" id="resultCount">0</span> 位會員
+      </div>
+    </div>
+    
+    <!-- ====== 會員列表（搜尋結果） ====== -->
+    <div class="member-list" id="memberList"></div>
+    
+    <!-- ====== 會員資訊卡片 ====== -->
     <div class="member-card" id="memberCard">
       <div class="member-info-row">
         <span class="member-label">會員姓名</span>
@@ -682,9 +839,13 @@
         <span class="member-label">會員電話</span>
         <span class="member-value" id="displayPhone">-</span>
       </div>
+      <div class="member-info-row">
+        <span class="member-label">會員等級</span>
+        <span class="member-value" id="displayLevel">-</span>
+      </div>
     </div>
     
-    <!-- Tab 導航 -->
+    <!-- ====== Tab 導航 ====== -->
     <div class="tabs" id="tabNav">
       <div class="tab-item active" data-tab="profile">
         <span class="tab-icon">📋</span> 會員資料
@@ -700,11 +861,11 @@
       </div>
     </div>
     
-    <!-- Tab 內容 -->
+    <!-- ====== Tab 內容 ====== -->
     <div class="tab-content" id="tabContent">
-      <!-- 動態載入 -->
-      <div class="loading-spinner">
-        <div class="spinner"></div>
+      <div class="empty-state">
+        <span class="empty-icon">🔍</span>
+        <p>請先搜尋會員</p>
       </div>
     </div>
     
@@ -722,6 +883,7 @@
   var currentMemberId = null;
   var currentMemberData = null;
   var currentTab = 'profile';
+  var searchResults = [];
   
   // ================================================================
   //  DOM 參考
@@ -734,9 +896,22 @@
   var loginPassword = document.getElementById('loginPassword');
   var loginError = document.getElementById('loginError');
   var logoutBtn = document.getElementById('logoutBtn');
+  var staffInfo = document.getElementById('staffInfo');
+  var staffName = document.getElementById('staffName');
+  var staffBranch = document.getElementById('staffBranch');
+  
+  var searchName = document.getElementById('searchName');
+  var searchPhone = document.getElementById('searchPhone');
+  var searchBtn = document.getElementById('searchBtn');
+  var clearBtn = document.getElementById('clearBtn');
+  var searchResultInfo = document.getElementById('searchResultInfo');
+  var resultCount = document.getElementById('resultCount');
+  var memberList = document.getElementById('memberList');
   
   var displayName = document.getElementById('displayName');
   var displayPhone = document.getElementById('displayPhone');
+  var displayLevel = document.getElementById('displayLevel');
+  var memberCard = document.getElementById('memberCard');
   var tabContent = document.getElementById('tabContent');
   var tabNav = document.getElementById('tabNav');
   
@@ -744,14 +919,12 @@
   //  登入功能
   // ================================================================
   
-  // 檢查是否已登入 (sessionStorage)
   function checkSession() {
     var session = sessionStorage.getItem('staffSession');
     if (session) {
       try {
         var data = JSON.parse(session);
         if (data.loginId && data.expireAt > Date.now()) {
-          // 有效 session
           showMainContent(data);
           return true;
         } else {
@@ -786,22 +959,14 @@
         loginBtn.textContent = '登入';
         
         if (result.success) {
-          // 儲存 session
           var sessionData = {
             loginId: account,
             name: result.name,
             role: result.role,
             branch: result.branch,
-            expireAt: Date.now() + 3600000 // 1小時
+            expireAt: Date.now() + 3600000
           };
           sessionStorage.setItem('staffSession', JSON.stringify(sessionData));
-          
-          // 如果有多筆會員，顯示第一筆
-          if (result.members && result.members.length > 0) {
-            currentMemberId = result.members[0].memberId;
-            currentMemberData = result.members[0];
-          }
-          
           showMainContent(sessionData);
         } else {
           showLoginError(result.message || '登入失敗');
@@ -828,15 +993,12 @@
     loginPage.style.display = 'none';
     mainContent.style.display = 'block';
     logoutBtn.style.display = 'flex';
+    staffInfo.style.display = 'flex';
+    staffName.textContent = sessionData.name || '店員';
+    staffBranch.textContent = sessionData.branch ? ' (' + sessionData.branch + ')' : '';
     
-    // 顯示店員名稱（可選）
-    // 載入會員資料
-    if (currentMemberId) {
-      loadMemberDetail(currentMemberId);
-    } else {
-      // 如果沒有會員，顯示空白狀態
-      showEmptyState('請搜尋會員');
-    }
+    // 顯示歡迎訊息
+    showEmptyState('🔍', '請輸入姓名或電話搜尋會員');
   }
   
   // ================================================================
@@ -856,13 +1018,109 @@
     sessionStorage.removeItem('staffSession');
     currentMemberId = null;
     currentMemberData = null;
+    searchResults = [];
     
     loginPage.style.display = 'flex';
     mainContent.style.display = 'none';
     logoutBtn.style.display = 'none';
+    staffInfo.style.display = 'none';
     loginAccount.value = '';
     loginPassword.value = '';
     hideLoginError();
+  }
+  
+  // ================================================================
+  //  搜尋會員
+  // ================================================================
+  
+  function doSearch() {
+    var name = searchName.value.trim();
+    var phone = searchPhone.value.trim();
+    
+    if (!name && !phone) {
+      showEmptyState('🔍', '請輸入姓名或電話');
+      return;
+    }
+    
+    searchBtn.disabled = true;
+    searchBtn.textContent = '搜尋中...';
+    memberList.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+    searchResultInfo.className = 'search-result-info';
+    memberCard.className = 'member-card';
+    currentMemberId = null;
+    currentMemberData = null;
+    
+    var url = GAS_URL + '?action=searchMember&name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone);
+    
+    fetch(url)
+      .then(function(response) { return response.json(); })
+      .then(function(result) {
+        searchBtn.disabled = false;
+        searchBtn.textContent = '🔍 查詢';
+        
+        if (result.success && result.members && result.members.length > 0) {
+          searchResults = result.members;
+          renderMemberList(result.members);
+          resultCount.textContent = result.members.length;
+          searchResultInfo.className = 'search-result-info show';
+          
+          // 自動選取第一筆
+          selectMember(result.members[0]);
+        } else {
+          searchResults = [];
+          memberList.innerHTML = '<div class="no-result"><span class="icon">😕</span><p>' + (result.message || '查無會員') + '</p></div>';
+          searchResultInfo.className = 'search-result-info';
+          memberCard.className = 'member-card';
+          showEmptyState('🔍', '請重新搜尋');
+        }
+      })
+      .catch(function(error) {
+        searchBtn.disabled = false;
+        searchBtn.textContent = '🔍 查詢';
+        memberList.innerHTML = '<div class="no-result"><span class="icon">⚠️</span><p>網路連線錯誤</p></div>';
+        console.error('Search error:', error);
+      });
+  }
+  
+  function renderMemberList(members) {
+    var html = '';
+    for (var i = 0; i < members.length; i++) {
+      var m = members[i];
+      html += '<div class="member-list-item" data-id="' + m.memberId + '" onclick="selectMemberById(\'' + m.memberId + '\')">';
+      html += '<div class="info">';
+      html += '<div class="name">' + (m.name || '-') + '</div>';
+      html += '<div class="phone">📱 ' + (m.phone || '-') + '</div>';
+      if (m.birthday) {
+        html += '<div class="meta">🎂 ' + m.birthday + '</div>';
+      }
+      html += '</div>';
+      html += '<span class="arrow">›</span>';
+      html += '</div>';
+    }
+    memberList.innerHTML = html;
+  }
+  
+  function selectMemberById(memberId) {
+    for (var i = 0; i < searchResults.length; i++) {
+      if (searchResults[i].memberId === memberId) {
+        selectMember(searchResults[i]);
+        break;
+      }
+    }
+  }
+  
+  function selectMember(member) {
+    currentMemberId = member.memberId;
+    currentMemberData = member;
+    
+    // 更新卡片
+    displayName.textContent = member.name || '-';
+    displayPhone.textContent = member.phone || '-';
+    displayLevel.textContent = member.level || '一般會員';
+    memberCard.className = 'member-card show';
+    
+    // 載入詳細資料
+    loadMemberDetail(member.memberId);
   }
   
   // ================================================================
@@ -879,25 +1137,15 @@
       .then(function(result) {
         if (result.success && result.data) {
           currentMemberData = result.data.memberData;
-          renderMemberCard(currentMemberData);
           renderTabContent(currentTab, result.data);
         } else {
-          showEmptyState('無法載入會員資料');
+          showEmptyState('📭', '無法載入會員資料');
         }
       })
       .catch(function(error) {
         console.error('Load detail error:', error);
-        showEmptyState('載入失敗，請稍後再試');
+        showEmptyState('⚠️', '載入失敗，請稍後再試');
       });
-  }
-  
-  // ================================================================
-  //  渲染：會員卡片
-  // ================================================================
-  
-  function renderMemberCard(data) {
-    displayName.textContent = data.name || '-';
-    displayPhone.textContent = data.phone || '-';
   }
   
   // ================================================================
@@ -942,7 +1190,7 @@
       { label: '🎂 生日', value: member.birthday || '未設定' },
       { label: '📅 最後消費', value: member.lastVisit || '無紀錄' },
       { label: '🏷️ 會員等級', value: member.level || '一般會員' },
-      { label: '📊 總消費金額', value: '$' + Number(member.totalSpend || 0).toLocaleString() },
+      { label: '📊 總消費', value: '$' + Number(member.totalSpend || 0).toLocaleString() },
       { label: '⭐ 累積總點數', value: Number(member.totalPoints || 0).toLocaleString(), points: true },
     ];
     
@@ -1031,7 +1279,6 @@
     
     html += '</div>';
     
-    // 進度條
     html += '<div class="points-bar-wrap">';
     html += '<div class="bar-label">';
     html += '<span>已使用點數</span>';
@@ -1072,7 +1319,7 @@
       html += '<div>';
       html += '<div class="coupon-name">' + (c.name || '優惠券') + '</div>';
       if (c.expireDate) {
-        html += '<div class="coupon-expire">到期日：' + formatDateDisplay(c.expireDate) + '</div>';
+        html += '<div class="coupon-expire">⏰ 到期日：' + formatDateDisplay(c.expireDate) + '</div>';
       }
       html += '</div>';
       html += '<span class="coupon-status ' + statusClass + '">' + statusText + '</span>';
@@ -1091,8 +1338,8 @@
     tabContent.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
   }
   
-  function showEmptyState(msg) {
-    tabContent.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>' + msg + '</p></div>';
+  function showEmptyState(icon, msg) {
+    tabContent.innerHTML = '<div class="empty-state"><span class="empty-icon">' + (icon || '📭') + '</span><p>' + (msg || '請先搜尋會員') + '</p></div>';
   }
   
   function formatDateDisplay(dateStr) {
@@ -1120,7 +1367,6 @@
     var tab = tabItem.dataset.tab;
     if (!tab) return;
     
-    // 更新 active 狀態
     var allTabs = tabNav.querySelectorAll('.tab-item');
     for (var i = 0; i < allTabs.length; i++) {
       allTabs[i].classList.remove('active');
@@ -1128,28 +1374,29 @@
     tabItem.classList.add('active');
     
     currentTab = tab;
-    // 如果有會員資料，載入對應 tab
+    
     if (currentMemberId) {
-      var url = GAS_URL + '?action=getMemberDetail&memberId=' + encodeURIComponent(currentMemberId);
-      showLoading();
-      
-      fetch(url)
-        .then(function(response) { return response.json(); })
-        .then(function(result) {
-          if (result.success && result.data) {
-            renderTabContent(currentTab, result.data);
-          } else {
-            showEmptyState('無法載入資料');
-          }
-        })
-        .catch(function(error) {
-          console.error('Load tab error:', error);
-          showEmptyState('載入失敗');
-        });
+      loadMemberDetail(currentMemberId);
     } else {
-      showEmptyState('請先搜尋會員');
+      showEmptyState('🔍', '請先搜尋會員');
     }
   });
+  
+  // ================================================================
+  //  清空搜尋
+  // ================================================================
+  
+  function clearSearch() {
+    searchName.value = '';
+    searchPhone.value = '';
+    searchResults = [];
+    currentMemberId = null;
+    currentMemberData = null;
+    memberList.innerHTML = '';
+    searchResultInfo.className = 'search-result-info';
+    memberCard.className = 'member-card';
+    showEmptyState('🔍', '請輸入姓名或電話搜尋會員');
+  }
   
   // ================================================================
   //  事件綁定
@@ -1167,25 +1414,30 @@
   
   logoutBtn.addEventListener('click', doLogout);
   
+  searchBtn.addEventListener('click', doSearch);
+  
+  clearBtn.addEventListener('click', clearSearch);
+  
+  searchName.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doSearch();
+  });
+  
+  searchPhone.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doSearch();
+  });
+  
   // ================================================================
   //  初始化
   // ================================================================
   
-  // 檢查 session
   if (!checkSession()) {
     loginPage.style.display = 'flex';
     mainContent.style.display = 'none';
     logoutBtn.style.display = 'none';
+    staffInfo.style.display = 'none';
   }
   
-  // 點擊登入頁面空白處可收起鍵盤
-  loginPage.addEventListener('click', function(e) {
-    if (e.target === loginPage) {
-      document.activeElement && document.activeElement.blur();
-    }
-  });
-  
-  console.log('🏠 老娘領地 會員查詢系統 v1.0');
+  console.log('🏠 老娘領地 會員查詢系統 v1.1');
   console.log('📌 GAS URL:', GAS_URL);
 </script>
 
