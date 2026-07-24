@@ -214,7 +214,55 @@
     .login-error.show {
       display: block;
     }
-    
+    /* ==================== 密碼顯示切換 ==================== */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 12px 46px 12px 14px;
+  border: 2px solid #e8e0d8;
+  border-radius: 10px;
+  font-size: 16px;
+  background: #faf8f6;
+  outline: none;
+  color: #2d2a27;
+  transition: border-color 0.2s;
+  flex: 1;
+}
+
+.password-wrapper input:focus {
+  border-color: #b8957a;
+  background: #ffffff;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  color: #8b7a6b;
+  transition: all 0.2s ease;
+  line-height: 1;
+  border-radius: 6px;
+}
+
+.toggle-password:active {
+  transform: translateY(-50%) scale(0.9);
+  background: #f0ebe6;
+}
+
+.toggle-password:hover {
+  color: #6b4c3b;
+}
     /* ==================== 搜尋區 ==================== */
     .search-section {
       background: #faf8f6;
@@ -792,29 +840,33 @@
     </div>
   </div>
   
-  <!-- ====== 登入頁面 ====== -->
-  <div id="loginPage" class="login-page">
-    <div class="login-logo">🏠</div>
-    <h2>老娘領地</h2>
-    <p class="subtitle">會員查詢系統</p>
-    
-    <div class="login-form">
-      <div class="login-error" id="loginError"></div>
-      
-      <div class="form-group">
-        <label>👤 登入帳號</label>
-        <input type="text" id="loginAccount" placeholder="請輸入帳號" autocomplete="username">
-      </div>
-      
-      <div class="form-group">
-        <label>🔒 登入密碼</label>
-        <input type="password" id="loginPassword" placeholder="請輸入密碼" autocomplete="current-password">
-      </div>
-      
-      <button class="login-btn" id="loginBtn">登入</button>
-    </div>
-  </div>
+  <!-- ==================== 登入頁面（修改後） ==================== -->
+<div id="loginPage" class="login-page">
+  <div class="login-logo">🏠</div>
+  <h2>老娘領地</h2>
+  <p class="subtitle">會員查詢系統</p>
   
+  <div class="login-form">
+    <div class="login-error" id="loginError"></div>
+    
+    <div class="form-group">
+      <label>👤 登入帳號</label>
+      <input type="text" id="loginAccount" placeholder="請輸入帳號" autocomplete="username">
+    </div>
+    
+    <div class="form-group">
+      <label>🔒 登入密碼</label>
+      <div class="password-wrapper">
+        <input type="password" id="loginPassword" placeholder="請輸入密碼" autocomplete="current-password">
+        <button type="button" class="toggle-password" id="togglePassword" aria-label="顯示密碼">
+          👁️
+        </button>
+      </div>
+    </div>
+    
+    <button class="login-btn" id="loginBtn">登入</button>
+  </div>
+</div>
   <!-- ====== 主要內容 ====== -->
   <div id="mainContent" style="display:none;">
     
@@ -992,7 +1044,30 @@
     
     showEmptyState('🔍', '請輸入姓名或電話搜尋會員');
   }
+  // ================================================================
+//  密碼顯示切換
+// ================================================================
+
+var togglePassword = document.getElementById('togglePassword');
+var loginPasswordInput = document.getElementById('loginPassword');
+
+togglePassword.addEventListener('click', function() {
+  var type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  loginPasswordInput.setAttribute('type', type);
   
+  // 切換圖示
+  this.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+});
+
+// 當密碼欄位失去焦點時，自動隱藏密碼（安全性）
+loginPasswordInput.addEventListener('blur', function() {
+  if (this.getAttribute('type') === 'text') {
+    // 可選擇是否要自動隱藏，我這裡保留讓使用者自己控制
+    // 如果要自動隱藏，取消註解下面這行
+    // this.setAttribute('type', 'password');
+    // togglePassword.textContent = '👁️';
+  }
+});
   // ================================================================
   //  登出功能
   // ================================================================
