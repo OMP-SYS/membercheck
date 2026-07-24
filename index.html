@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>老娘領地 · 會員查詢中心</title>
+  <title>老娘領地 · 會員中心</title>
   <style>
     * {
       margin: 0;
@@ -19,10 +19,8 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      /* iPad 大畫面舒適留白 */
     }
 
-    /* 主卡片 — 完全模仿「圖1.png」的方正版面，非長條形 */
     .card {
       max-width: 720px;
       width: 100%;
@@ -30,11 +28,9 @@
       border-radius: 48px 48px 40px 40px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.06);
       padding: 36px 32px 32px;
-      transition: all 0.2s;
       border: 1px solid rgba(255, 245, 235, 0.5);
     }
 
-    /* 標題區 — 大娘領地 */
     .brand-header {
       display: flex;
       align-items: center;
@@ -63,7 +59,6 @@
       margin-left: 4px;
     }
 
-    /* 會員姓名 + 電話 兩列 (類似圖片並排) */
     .member-row {
       display: flex;
       flex-wrap: wrap;
@@ -105,7 +100,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* 會員資料 四大方塊 (仿圖片) */
     .menu-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -121,17 +115,25 @@
       border: 1px solid #efe3d9;
       box-shadow: 0 4px 8px rgba(110, 78, 58, 0.04);
       transition: all 0.15s;
-      cursor: default;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 110px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .menu-card:hover {
+      background: #f5ede5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(110, 78, 58, 0.08);
     }
 
     .menu-card:active {
-      background: #f5ede5;
-      transform: scale(0.97);
+      transform: scale(0.95);
+      background: #efe4da;
     }
 
     .menu-card .icon {
@@ -155,13 +157,6 @@
       margin: 0 auto;
     }
 
-    /* 特殊處理：消費紀錄／集點資料／優惠券 圖標微調 */
-    .menu-card:nth-child(1) .icon { font-size: 44px; }   /* 會員資料 */
-    .menu-card:nth-child(2) .icon { font-size: 40px; }   /* 消費紀錄 */
-    .menu-card:nth-child(3) .icon { font-size: 44px; }   /* 集點資料 */
-    .menu-card:nth-child(4) .icon { font-size: 42px; }   /* 優惠券 */
-
-    /* 登出按鈕 — 獨立且明顯，仿圖片下方置中 */
     .logout-section {
       display: flex;
       justify-content: center;
@@ -185,7 +180,13 @@
       align-items: center;
       gap: 12px;
       background: #f5ede5;
-      cursor: default;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .logout-btn:hover {
+      background: #ede1d6;
     }
 
     .logout-btn:active {
@@ -198,12 +199,32 @@
       line-height: 1;
     }
 
-    /* 輔助調整 — 讓版面更貼近圖1的「方塊」感 */
-    .member-row .member-item:last-child {
-      margin-left: auto;
+    /* Toast 提示訊息 */
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2f1f12;
+      color: #f5ede5;
+      padding: 16px 32px;
+      border-radius: 60px;
+      font-size: 18px;
+      font-weight: 500;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 999;
+      border: 1px solid rgba(255,215,175,0.15);
     }
 
-    /* 當寬度小於 500px 時稍微調整 (仍保持方塊) */
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     @media (max-width: 540px) {
       body { padding: 16px; }
       .card { padding: 24px 18px 24px; border-radius: 36px; }
@@ -212,6 +233,7 @@
       .menu-card { min-height: 96px; padding: 16px 8px; }
       .menu-card .menu-label { font-size: 18px; }
       .logout-btn { padding: 14px 32px; font-size: 22px; letter-spacing: 4px; }
+      .toast { font-size: 15px; padding: 12px 24px; white-space: normal; max-width: 90%; }
     }
 
     @media (max-width: 440px) {
@@ -220,42 +242,24 @@
       .menu-grid { gap: 12px; }
     }
 
-    /* iPad 大螢幕舒適感 — 讓卡片不過度撐寬 */
     @media (min-width: 800px) {
       .card { padding: 44px 40px 36px; }
       .menu-grid { gap: 24px; }
       .menu-card { min-height: 130px; }
     }
-
-    /* 還原圖片的「會員資料」四個字下面有小字？但圖片中只有單層，我們照做 */
-    /* 用裝飾性的小標點或emoji點綴，保留乾淨 */
-    .menu-card .sub-hint {
-      font-size: 14px;
-      color: #9b8472;
-      margin-top: 4px;
-      letter-spacing: 1px;
-      opacity: 0.5;
-      font-weight: 400;
-    }
-
-    /* 將四個方塊的內容完全對應「會員資料」「消費紀錄」「集點資料」「優惠券」 */
-    /* 並加上小圖示，更接近原圖風格(原圖無icon，但我們用符號增加辨識) */
-    /* 完全符合原圖文字，不加多餘按鈕 */
   </style>
 </head>
 <body>
-  <div class="card" role="main" aria-label="大娘領地會員中心">
 
-    <!-- 標題: 大娘領地 -->
+  <div class="card" role="main" aria-label="老娘領地會員中心">
+
     <div class="brand-header">
       <div class="brand-title">
-        大娘領地
+        老娘領地
         <small>·</small>
       </div>
-      <!-- 右側可放裝飾，但圖片沒有，留白 -->
     </div>
 
-    <!-- 會員姓名 + 電話，兩欄並排 (姓名/電話) -->
     <div class="member-row">
       <div class="member-item">
         <span class="label">會員姓名</span>
@@ -267,41 +271,101 @@
       </div>
     </div>
 
-    <!-- 四大功能方塊 (會員資料, 消費紀錄, 集點資料, 優惠券) 完全對應圖片 -->
     <div class="menu-grid">
-      <!-- 1. 會員資料 -->
-      <div class="menu-card">
+      <div class="menu-card" data-action="profile">
         <div class="icon">👤</div>
         <div class="menu-label">會員資料</div>
-        <!-- 不加額外文字，但可保留小點綴 圖片無 sub -->
       </div>
-      <!-- 2. 消費紀錄 -->
-      <div class="menu-card">
+      <div class="menu-card" data-action="history">
         <div class="icon">🧾</div>
         <div class="menu-label">消費紀錄</div>
       </div>
-      <!-- 3. 集點資料 -->
-      <div class="menu-card">
+      <div class="menu-card" data-action="points">
         <div class="icon">⭐</div>
         <div class="menu-label">集點資料</div>
       </div>
-      <!-- 4. 優惠券 -->
-      <div class="menu-card">
+      <div class="menu-card" data-action="coupon">
         <div class="icon">🎫</div>
         <div class="menu-label">優惠券</div>
       </div>
     </div>
 
-    <!-- 登出 (獨立一行，置中) -->
     <div class="logout-section">
-      <div class="logout-btn" role="button" tabindex="0" aria-label="登出">
+      <div class="logout-btn" id="logoutBtn">
         <span>⏻</span> 登出
       </div>
     </div>
 
-    <!-- 極低調的裝飾說明（符合原圖，不加多餘文字） -->
   </div>
 
-  <!-- 簡短說明：此版面完全參考「圖1.png」的 iPad 開啟樣式，非長條形，方塊排版 -->
+  <!-- Toast 提示 -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function() {
+      const toast = document.getElementById('toast');
+      let toastTimer = null;
+
+      function showToast(message) {
+        // 清除之前的計時器
+        if (toastTimer) {
+          clearTimeout(toastTimer);
+          toastTimer = null;
+        }
+        // 更新文字並顯示
+        toast.textContent = message;
+        toast.classList.add('show');
+        // 3秒後自動隱藏
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+          toastTimer = null;
+        }, 2500);
+      }
+
+      // 取得所有功能卡片
+      const menuCards = document.querySelectorAll('.menu-card');
+      menuCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          const action = this.dataset.action;
+          let message = '';
+          switch(action) {
+            case 'profile':
+              message = '📋 正在載入會員資料...';
+              break;
+            case 'history':
+              message = '🧾 正在載入消費紀錄...';
+              break;
+            case 'points':
+              message = '⭐ 正在載入集點資料...';
+              break;
+            case 'coupon':
+              message = '🎫 正在載入優惠券...';
+              break;
+            default:
+              message = '功能開發中，敬請期待！';
+          }
+          showToast(message);
+          console.log(`[點擊] ${this.querySelector('.menu-label').textContent}`);
+        });
+      });
+
+      // 登出按鈕
+      const logoutBtn = document.getElementById('logoutBtn');
+      logoutBtn.addEventListener('click', function(e) {
+        showToast('👋 您已成功登出！');
+        console.log('[點擊] 登出');
+        // 實際應用可在此執行登出邏輯
+      });
+
+      // 點擊空白處可隱藏 toast（輔助功能）
+      document.addEventListener('click', function(e) {
+        // 如果點擊的不是 toast 本身，且 toast 是顯示狀態，不強制關閉（讓計時器自動關）
+        // 但我們保留計時器機制，所以不額外處理
+      });
+
+      console.log('✅ 老娘領地已啟動 — 所有按鈕都有反應！');
+    })();
+  </script>
+
 </body>
 </html>
