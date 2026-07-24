@@ -1,371 +1,1193 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>老娘領地 · 會員中心</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>老娘領地 - 會員查詢系統</title>
+  
   <style>
+    /* ==================== 全域重置 ==================== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-
+    
     body {
-      background: linear-gradient(145deg, #f7f3ee 0%, #eae3db 100%);
+      font-family: -apple-system, 'PingFang TC', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif;
+      background: #f5f0eb;
       min-height: 100vh;
+      padding: 16px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 24px;
+      align-items: flex-start;
     }
-
-    .card {
-      max-width: 720px;
+    
+    /* ==================== 主容器 - iPad 優化 ==================== */
+    .container {
+      max-width: 768px;
       width: 100%;
+      margin: 0 auto;
       background: #ffffff;
-      border-radius: 48px 48px 40px 40px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.06);
-      padding: 36px 32px 32px;
-      border: 1px solid rgba(255, 245, 235, 0.5);
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+      padding: 24px 24px 32px;
+      min-height: 92vh;
+      position: relative;
     }
-
-    .brand-header {
+    
+    /* ==================== 頂部標題列 ==================== */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 2px solid #f0ebe6;
+      margin-bottom: 22px;
+    }
+    
+    .header-left {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
+      gap: 10px;
     }
-
-    .brand-title {
-      font-size: 34px;
-      font-weight: 600;
+    
+    .header-icon {
+      font-size: 30px;
+      line-height: 1;
+    }
+    
+    .header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #6b4c3b;
       letter-spacing: 2px;
-      color: #3d2c1e;
-      background: #fcf6f0;
-      padding: 6px 22px 6px 18px;
-      border-radius: 100px;
-      display: inline-block;
-      box-shadow: inset 0 1px 4px rgba(255, 215, 175, 0.3);
-      border: 1px solid #f0ded0;
     }
-
-    .brand-title small {
-      font-size: 20px;
-      font-weight: 400;
-      color: #8b6f5a;
-      margin-left: 4px;
+    
+    .header-badge {
+      background: #e8ddd0;
+      color: #6b4c3b;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin-left: 6px;
     }
-
-    .member-row {
-      display: flex;
-      flex-wrap: wrap;
-      background: #fcf8f4;
-      border-radius: 30px;
-      padding: 18px 24px;
-      margin-bottom: 28px;
-      border: 1px solid #f0e3d9;
-      box-shadow: inset 0 2px 6px rgba(255, 235, 215, 0.3);
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .member-item {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 4px 0;
-    }
-
-    .member-item .label {
-      font-size: 18px;
+    
+    .logout-btn {
+      padding: 10px 22px;
+      background: #f0ebe6;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
       font-weight: 500;
-      color: #6f5542;
-      letter-spacing: 1px;
-    }
-
-    .member-item .value {
-      font-size: 24px;
-      font-weight: 550;
-      color: #2f1f12;
-      background: white;
-      padding: 4px 18px 4px 16px;
-      border-radius: 40px;
-      border: 1px solid #e6d3c4;
-      background: #fffbf8;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-      letter-spacing: 0.5px;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 32px;
-    }
-
-    .menu-card {
-      background: #fcf7f2;
-      border-radius: 28px;
-      padding: 22px 14px 18px;
-      text-align: center;
-      border: 1px solid #efe3d9;
-      box-shadow: 0 4px 8px rgba(110, 78, 58, 0.04);
-      transition: all 0.15s;
+      color: #6b5544;
       cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .logout-btn:active {
+      transform: scale(0.95);
+      background: #e0d8d0;
+    }
+    
+    /* ==================== 登入頁面 ==================== */
+    .login-page {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 110px;
+      min-height: 70vh;
+      padding: 20px 0;
+    }
+    
+    .login-page .login-logo {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+    
+    .login-page h2 {
+      font-size: 28px;
+      color: #6b4c3b;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    
+    .login-page .subtitle {
+      color: #a08b7a;
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .login-form {
+      width: 100%;
+      max-width: 380px;
+    }
+    
+    .login-form .form-group {
+      margin-bottom: 18px;
+    }
+    
+    .login-form label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b5544;
+      margin-bottom: 6px;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e8e0d8;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #faf8f6;
+      transition: border-color 0.2s;
+      outline: none;
+      color: #2d2a27;
+    }
+    
+    .login-form input:focus {
+      border-color: #b8957a;
+      background: #ffffff;
+    }
+    
+    .login-form .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: #8b6b4d;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+    
+    .login-form .login-btn:active {
+      transform: scale(0.97);
+      background: #6b4c3b;
+    }
+    
+    .login-form .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .login-error {
+      background: #fde8e8;
+      color: #c0392b;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    
+    .login-error.show {
+      display: block;
+    }
+    
+    /* ==================== 會員資訊卡片 ==================== */
+    .member-card {
+      background: #faf8f6;
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      border: 1px solid #f0ebe6;
+    }
+    
+    .member-info-row {
+      display: flex;
+      padding: 7px 0;
+      border-bottom: 1px solid #f0ebe6;
+    }
+    
+    .member-info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .member-label {
+      width: 90px;
+      color: #8b7a6b;
+      font-size: 15px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    
+    .member-value {
+      flex: 1;
+      color: #2d2a27;
+      font-size: 17px;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    
+    .member-value .highlight {
+      color: #8b6b4d;
+    }
+    
+    /* ==================== Tab 導航 ==================== */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .tab-item {
+      padding: 13px 6px;
+      text-align: center;
+      background: #f5f0eb;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #6b5544;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 2px solid transparent;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
     }
-
-    .menu-card:hover {
-      background: #f5ede5;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(110, 78, 58, 0.08);
-    }
-
-    .menu-card:active {
+    
+    .tab-item:active {
       transform: scale(0.95);
-      background: #efe4da;
     }
-
-    .menu-card .icon {
-      font-size: 40px;
-      line-height: 1;
-      margin-bottom: 10px;
-      filter: drop-shadow(0 2px 4px rgba(150, 100, 70, 0.1));
+    
+    .tab-item.active {
+      background: #8b6b4d;
+      color: #ffffff;
+      border-color: #8b6b4d;
+      box-shadow: 0 4px 12px rgba(139, 107, 77, 0.25);
     }
-
-    .menu-card .menu-label {
-      font-size: 22px;
-      font-weight: 550;
-      color: #412f21;
-      letter-spacing: 2px;
-      background: rgba(255, 242, 232, 0.5);
-      padding: 4px 18px;
-      border-radius: 60px;
-      backdrop-filter: blur(1px);
-      border: 1px solid #f0ddd0;
-      width: fit-content;
-      margin: 0 auto;
+    
+    .tab-item .tab-icon {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 2px;
     }
-
-    .logout-section {
+    
+    /* ==================== Tab 內容區 ==================== */
+    .tab-content {
+      background: #faf8f6;
+      border-radius: 16px;
+      padding: 16px 16px 20px;
+      min-height: 320px;
+      border: 1px solid #f0ebe6;
+    }
+    
+    .tab-content .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #a08b7a;
+    }
+    
+    .tab-content .empty-state .empty-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    
+    .tab-content .empty-state p {
+      font-size: 15px;
+    }
+    
+    /* ==================== 會員資料頁 ==================== */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .profile-item {
+      background: #ffffff;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #f0ebe6;
+    }
+    
+    .profile-item .label {
+      font-size: 12px;
+      color: #a08b7a;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .profile-item .value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2d2a27;
+      margin-top: 4px;
+    }
+    
+    .profile-item .value.points {
+      color: #8b6b4d;
+    }
+    
+    .profile-item.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    /* ==================== 消費紀錄表格 ==================== */
+    .record-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .record-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 500px;
+    }
+    
+    .record-table th {
+      text-align: left;
+      padding: 10px 8px;
+      color: #8b7a6b;
+      font-weight: 600;
+      border-bottom: 2px solid #e8e0d8;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    
+    .record-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #f0ebe6;
+      color: #2d2a27;
+      font-size: 14px;
+    }
+    
+    .record-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .record-table .amount {
+      font-weight: 600;
+      color: #6b4c3b;
+    }
+    
+    .record-table .points-badge {
+      background: #e8ddd0;
+      color: #6b4c3b;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    
+    /* ==================== 集點資料 ==================== */
+    .points-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .points-card {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #f0ebe6;
+      text-align: center;
+    }
+    
+    .points-card .number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #8b6b4d;
+    }
+    
+    .points-card .label {
+      font-size: 13px;
+      color: #a08b7a;
+      margin-top: 4px;
+    }
+    
+    .points-bar-wrap {
+      background: #ffffff;
+      padding: 16px 18px;
+      border-radius: 12px;
+      border: 1px solid #f0ebe6;
+    }
+    
+    .points-bar-wrap .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #6b5544;
+      margin-bottom: 6px;
+    }
+    
+    .points-bar {
+      height: 8px;
+      background: #f0ebe6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .points-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4a373, #8b6b4d);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+      width: 0%;
+    }
+    
+    /* ==================== 優惠券 ==================== */
+    .coupon-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .coupon-item {
+      background: #ffffff;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid #f0ebe6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .coupon-item .coupon-name {
+      font-weight: 600;
+      color: #2d2a27;
+      font-size: 15px;
+    }
+    
+    .coupon-item .coupon-status {
+      font-size: 13px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    
+    .coupon-item .coupon-status.available {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .coupon-item .coupon-status.used {
+      background: #f5f5f5;
+      color: #888;
+    }
+    
+    .coupon-item .coupon-status.expired {
+      background: #fde8e8;
+      color: #c0392b;
+    }
+    
+    .coupon-item .coupon-expire {
+      font-size: 12px;
+      color: #a08b7a;
+    }
+    
+    /* ==================== 載入動畫 ==================== */
+    .loading-spinner {
       display: flex;
       justify-content: center;
-      margin-top: 10px;
-      padding-top: 12px;
-      border-top: 2px dashed #eaded2;
-    }
-
-    .logout-btn {
-      background: #f2e7de;
-      border: 1px solid #dccbbe;
-      padding: 16px 48px;
-      border-radius: 100px;
-      font-size: 26px;
-      font-weight: 550;
-      color: #4b3728;
-      letter-spacing: 6px;
-      box-shadow: 0 6px 0 #d4c2b2, 0 8px 16px rgba(100, 70, 50, 0.08);
-      transition: all 0.08s linear;
-      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      background: #f5ede5;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      padding: 40px 0;
     }
-
-    .logout-btn:hover {
-      background: #ede1d6;
+    
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 4px solid #f0ebe6;
+      border-top-color: #8b6b4d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
-
-    .logout-btn:active {
-      transform: translateY(5px);
-      box-shadow: 0 1px 0 #cbb7a5, 0 6px 12px rgba(100, 70, 50, 0.08);
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
-
-    .logout-btn span {
-      font-size: 32px;
-      line-height: 1;
+    
+    /* ==================== 響應式調整 ==================== */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 16px 16px 24px;
+        border-radius: 16px;
+        min-height: 96vh;
+      }
+      
+      .header h1 {
+        font-size: 20px;
+      }
+      
+      .header-icon {
+        font-size: 24px;
+      }
+      
+      .logout-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      
+      .tabs {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      
+      .tab-item {
+        padding: 10px 4px;
+        font-size: 13px;
+      }
+      
+      .tab-item .tab-icon {
+        font-size: 18px;
+      }
+      
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .points-summary {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .member-label {
+        width: 70px;
+        font-size: 13px;
+      }
+      
+      .member-value {
+        font-size: 15px;
+      }
+      
+      .login-page h2 {
+        font-size: 22px;
+      }
+      
+      .login-form {
+        max-width: 100%;
+      }
+      
+      .record-table {
+        font-size: 13px;
+        min-width: 400px;
+      }
+      
+      .record-table th,
+      .record-table td {
+        padding: 8px 6px;
+      }
     }
-
-    /* Toast 提示訊息 */
-    .toast {
-      position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #2f1f12;
-      color: #f5ede5;
-      padding: 16px 32px;
-      border-radius: 60px;
-      font-size: 18px;
-      font-weight: 500;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-      opacity: 0;
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 999;
-      border: 1px solid rgba(255,215,175,0.15);
+    
+    @media (max-width: 400px) {
+      .container {
+        padding: 12px 12px 20px;
+      }
+      
+      .header h1 {
+        font-size: 17px;
+      }
+      
+      .logout-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      
+      .points-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      
+      .points-card .number {
+        font-size: 24px;
+      }
     }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 540px) {
-      body { padding: 16px; }
-      .card { padding: 24px 18px 24px; border-radius: 36px; }
-      .brand-title { font-size: 28px; padding: 4px 18px; }
-      .member-item .value { font-size: 20px; padding: 2px 14px; }
-      .menu-card { min-height: 96px; padding: 16px 8px; }
-      .menu-card .menu-label { font-size: 18px; }
-      .logout-btn { padding: 14px 32px; font-size: 22px; letter-spacing: 4px; }
-      .toast { font-size: 15px; padding: 12px 24px; white-space: normal; max-width: 90%; }
-    }
-
-    @media (max-width: 440px) {
-      .member-row { flex-direction: column; align-items: stretch; gap: 8px; }
-      .member-item:last-child { margin-left: 0; }
-      .menu-grid { gap: 12px; }
-    }
-
-    @media (min-width: 800px) {
-      .card { padding: 44px 40px 36px; }
-      .menu-grid { gap: 24px; }
-      .menu-card { min-height: 130px; }
+    
+    /* ==================== iPad 橫式 ==================== */
+    @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+      .container {
+        max-width: 900px;
+        padding: 28px 32px;
+      }
+      
+      .profile-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .points-summary {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="card" role="main" aria-label="老娘領地會員中心">
-
-    <div class="brand-header">
-      <div class="brand-title">
-        老娘領地
-        <small>·</small>
-      </div>
+<div class="container" id="app">
+  
+  <!-- ====== 頂部標題 ====== -->
+  <div class="header">
+    <div class="header-left">
+      <span class="header-icon">🏠</span>
+      <h1>老娘領地</h1>
+      <span class="header-badge">查詢</span>
     </div>
-
-    <div class="member-row">
-      <div class="member-item">
-        <span class="label">會員姓名</span>
-        <span class="value">嗨購</span>
-      </div>
-      <div class="member-item">
-        <span class="label">會員電話</span>
-        <span class="value">0938-888-899</span>
-      </div>
-    </div>
-
-    <div class="menu-grid">
-      <div class="menu-card" data-action="profile">
-        <div class="icon">👤</div>
-        <div class="menu-label">會員資料</div>
-      </div>
-      <div class="menu-card" data-action="history">
-        <div class="icon">🧾</div>
-        <div class="menu-label">消費紀錄</div>
-      </div>
-      <div class="menu-card" data-action="points">
-        <div class="icon">⭐</div>
-        <div class="menu-label">集點資料</div>
-      </div>
-      <div class="menu-card" data-action="coupon">
-        <div class="icon">🎫</div>
-        <div class="menu-label">優惠券</div>
-      </div>
-    </div>
-
-    <div class="logout-section">
-      <div class="logout-btn" id="logoutBtn">
-        <span>⏻</span> 登出
-      </div>
-    </div>
-
+    <button class="logout-btn" id="logoutBtn" style="display:none;">
+      <span>🚪</span> 登出
+    </button>
   </div>
+  
+  <!-- ====== 登入頁面 ====== -->
+  <div id="loginPage" class="login-page">
+    <div class="login-logo">🏠</div>
+    <h2>老娘領地</h2>
+    <p class="subtitle">會員查詢系統</p>
+    
+    <div class="login-form">
+      <div class="login-error" id="loginError"></div>
+      
+      <div class="form-group">
+        <label>👤 登入帳號</label>
+        <input type="text" id="loginAccount" placeholder="請輸入帳號" autocomplete="username">
+      </div>
+      
+      <div class="form-group">
+        <label>🔒 登入密碼</label>
+        <input type="password" id="loginPassword" placeholder="請輸入密碼" autocomplete="current-password">
+      </div>
+      
+      <button class="login-btn" id="loginBtn">登入</button>
+    </div>
+  </div>
+  
+  <!-- ====== 主要內容（登入後顯示） ====== -->
+  <div id="mainContent" style="display:none;">
+    
+    <!-- 會員資訊卡片 -->
+    <div class="member-card" id="memberCard">
+      <div class="member-info-row">
+        <span class="member-label">會員姓名</span>
+        <span class="member-value" id="displayName">-</span>
+      </div>
+      <div class="member-info-row">
+        <span class="member-label">會員電話</span>
+        <span class="member-value" id="displayPhone">-</span>
+      </div>
+    </div>
+    
+    <!-- Tab 導航 -->
+    <div class="tabs" id="tabNav">
+      <div class="tab-item active" data-tab="profile">
+        <span class="tab-icon">📋</span> 會員資料
+      </div>
+      <div class="tab-item" data-tab="records">
+        <span class="tab-icon">🧾</span> 消費紀錄
+      </div>
+      <div class="tab-item" data-tab="points">
+        <span class="tab-icon">⭐</span> 集點資料
+      </div>
+      <div class="tab-item" data-tab="coupons">
+        <span class="tab-icon">🎫</span> 優惠券
+      </div>
+    </div>
+    
+    <!-- Tab 內容 -->
+    <div class="tab-content" id="tabContent">
+      <!-- 動態載入 -->
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    
+  </div>
+</div>
 
-  <!-- Toast 提示 -->
-  <div class="toast" id="toast"></div>
-
-  <script>
-    (function() {
-      const toast = document.getElementById('toast');
-      let toastTimer = null;
-
-      function showToast(message) {
-        // 清除之前的計時器
-        if (toastTimer) {
-          clearTimeout(toastTimer);
-          toastTimer = null;
+<script>
+  // ================================================================
+  //  全域設定
+  // ================================================================
+  
+  // 🔧 請修改為您的 GAS 部署網址
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbwUp92g3PDd62SFceEtlPYnzGejtcP3izzPdveC1rOQE8ml6MDwBe_c5q6VGPV8gbNs/exec';
+  
+  var currentMemberId = null;
+  var currentMemberData = null;
+  var currentTab = 'profile';
+  
+  // ================================================================
+  //  DOM 參考
+  // ================================================================
+  
+  var loginPage = document.getElementById('loginPage');
+  var mainContent = document.getElementById('mainContent');
+  var loginBtn = document.getElementById('loginBtn');
+  var loginAccount = document.getElementById('loginAccount');
+  var loginPassword = document.getElementById('loginPassword');
+  var loginError = document.getElementById('loginError');
+  var logoutBtn = document.getElementById('logoutBtn');
+  
+  var displayName = document.getElementById('displayName');
+  var displayPhone = document.getElementById('displayPhone');
+  var tabContent = document.getElementById('tabContent');
+  var tabNav = document.getElementById('tabNav');
+  
+  // ================================================================
+  //  登入功能
+  // ================================================================
+  
+  // 檢查是否已登入 (sessionStorage)
+  function checkSession() {
+    var session = sessionStorage.getItem('staffSession');
+    if (session) {
+      try {
+        var data = JSON.parse(session);
+        if (data.loginId && data.expireAt > Date.now()) {
+          // 有效 session
+          showMainContent(data);
+          return true;
+        } else {
+          sessionStorage.removeItem('staffSession');
         }
-        // 更新文字並顯示
-        toast.textContent = message;
-        toast.classList.add('show');
-        // 3秒後自動隱藏
-        toastTimer = setTimeout(() => {
-          toast.classList.remove('show');
-          toastTimer = null;
-        }, 2500);
+      } catch(e) {
+        sessionStorage.removeItem('staffSession');
       }
-
-      // 取得所有功能卡片
-      const menuCards = document.querySelectorAll('.menu-card');
-      menuCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-          const action = this.dataset.action;
-          let message = '';
-          switch(action) {
-            case 'profile':
-              message = '📋 正在載入會員資料...';
-              break;
-            case 'history':
-              message = '🧾 正在載入消費紀錄...';
-              break;
-            case 'points':
-              message = '⭐ 正在載入集點資料...';
-              break;
-            case 'coupon':
-              message = '🎫 正在載入優惠券...';
-              break;
-            default:
-              message = '功能開發中，敬請期待！';
+    }
+    return false;
+  }
+  
+  function doLogin() {
+    var account = loginAccount.value.trim();
+    var password = loginPassword.value.trim();
+    
+    if (!account || !password) {
+      showLoginError('請輸入帳號和密碼');
+      return;
+    }
+    
+    loginBtn.disabled = true;
+    loginBtn.textContent = '登入中...';
+    hideLoginError();
+    
+    var url = GAS_URL + '?action=staffLogin&account=' + encodeURIComponent(account) + '&password=' + encodeURIComponent(password);
+    
+    fetch(url)
+      .then(function(response) { return response.json(); })
+      .then(function(result) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = '登入';
+        
+        if (result.success) {
+          // 儲存 session
+          var sessionData = {
+            loginId: account,
+            name: result.name,
+            role: result.role,
+            branch: result.branch,
+            expireAt: Date.now() + 3600000 // 1小時
+          };
+          sessionStorage.setItem('staffSession', JSON.stringify(sessionData));
+          
+          // 如果有多筆會員，顯示第一筆
+          if (result.members && result.members.length > 0) {
+            currentMemberId = result.members[0].memberId;
+            currentMemberData = result.members[0];
           }
-          showToast(message);
-          console.log(`[點擊] ${this.querySelector('.menu-label').textContent}`);
+          
+          showMainContent(sessionData);
+        } else {
+          showLoginError(result.message || '登入失敗');
+        }
+      })
+      .catch(function(error) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = '登入';
+        showLoginError('網路連線錯誤，請稍後再試');
+        console.error('Login error:', error);
+      });
+  }
+  
+  function showLoginError(msg) {
+    loginError.textContent = msg;
+    loginError.className = 'login-error show';
+  }
+  
+  function hideLoginError() {
+    loginError.className = 'login-error';
+  }
+  
+  function showMainContent(sessionData) {
+    loginPage.style.display = 'none';
+    mainContent.style.display = 'block';
+    logoutBtn.style.display = 'flex';
+    
+    // 顯示店員名稱（可選）
+    // 載入會員資料
+    if (currentMemberId) {
+      loadMemberDetail(currentMemberId);
+    } else {
+      // 如果沒有會員，顯示空白狀態
+      showEmptyState('請搜尋會員');
+    }
+  }
+  
+  // ================================================================
+  //  登出功能
+  // ================================================================
+  
+  function doLogout() {
+    var session = sessionStorage.getItem('staffSession');
+    if (session) {
+      try {
+        var data = JSON.parse(session);
+        var url = GAS_URL + '?action=staffLogout&loginId=' + encodeURIComponent(data.loginId);
+        fetch(url).catch(function() {});
+      } catch(e) {}
+    }
+    
+    sessionStorage.removeItem('staffSession');
+    currentMemberId = null;
+    currentMemberData = null;
+    
+    loginPage.style.display = 'flex';
+    mainContent.style.display = 'none';
+    logoutBtn.style.display = 'none';
+    loginAccount.value = '';
+    loginPassword.value = '';
+    hideLoginError();
+  }
+  
+  // ================================================================
+  //  載入會員詳細資料
+  // ================================================================
+  
+  function loadMemberDetail(memberId) {
+    showLoading();
+    
+    var url = GAS_URL + '?action=getMemberDetail&memberId=' + encodeURIComponent(memberId);
+    
+    fetch(url)
+      .then(function(response) { return response.json(); })
+      .then(function(result) {
+        if (result.success && result.data) {
+          currentMemberData = result.data.memberData;
+          renderMemberCard(currentMemberData);
+          renderTabContent(currentTab, result.data);
+        } else {
+          showEmptyState('無法載入會員資料');
+        }
+      })
+      .catch(function(error) {
+        console.error('Load detail error:', error);
+        showEmptyState('載入失敗，請稍後再試');
+      });
+  }
+  
+  // ================================================================
+  //  渲染：會員卡片
+  // ================================================================
+  
+  function renderMemberCard(data) {
+    displayName.textContent = data.name || '-';
+    displayPhone.textContent = data.phone || '-';
+  }
+  
+  // ================================================================
+  //  渲染：Tab 內容
+  // ================================================================
+  
+  function renderTabContent(tab, data) {
+    var container = tabContent;
+    
+    switch(tab) {
+      case 'profile':
+        renderProfile(container, data.memberData);
+        break;
+      case 'records':
+        renderRecords(container, data.transactions);
+        break;
+      case 'points':
+        renderPoints(container, data.pointSummary);
+        break;
+      case 'coupons':
+        renderCoupons(container, data.coupons);
+        break;
+      default:
+        container.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>未知頁面</p></div>';
+    }
+  }
+  
+  // ---------- 會員資料 ----------
+  function renderProfile(container, member) {
+    if (!member) {
+      container.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>無會員資料</p></div>';
+      return;
+    }
+    
+    var html = '';
+    html += '<div class="profile-grid">';
+    
+    var fields = [
+      { label: '會員編號', value: member.memberId || '-' },
+      { label: '會員姓名', value: member.name || '-' },
+      { label: '會員電話', value: member.phone || '-' },
+      { label: '🎂 生日', value: member.birthday || '未設定' },
+      { label: '📅 最後消費', value: member.lastVisit || '無紀錄' },
+      { label: '🏷️ 會員等級', value: member.level || '一般會員' },
+      { label: '📊 總消費金額', value: '$' + Number(member.totalSpend || 0).toLocaleString() },
+      { label: '⭐ 累積總點數', value: Number(member.totalPoints || 0).toLocaleString(), points: true },
+    ];
+    
+    for (var i = 0; i < fields.length; i++) {
+      var f = fields[i];
+      var cls = 'profile-item';
+      if (f.points) cls += ' points';
+      html += '<div class="' + cls + '">';
+      html += '<div class="label">' + f.label + '</div>';
+      html += '<div class="value' + (f.points ? ' points' : '') + '">' + f.value + '</div>';
+      html += '</div>';
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+  }
+  
+  // ---------- 消費紀錄 ----------
+  function renderRecords(container, transactions) {
+    if (!transactions || transactions.length === 0) {
+      container.innerHTML = '<div class="empty-state"><span class="empty-icon">🧾</span><p>尚無消費紀錄</p></div>';
+      return;
+    }
+    
+    var html = '';
+    html += '<div class="record-table-wrap">';
+    html += '<table class="record-table">';
+    html += '<thead><tr>';
+    html += '<th>日期</th>';
+    html += '<th>分店</th>';
+    html += '<th>類別</th>';
+    html += '<th>金額</th>';
+    html += '<th>點數</th>';
+    html += '</tr></thead>';
+    html += '<tbody>';
+    
+    for (var i = 0; i < transactions.length; i++) {
+      var t = transactions[i];
+      var dateStr = t.date ? formatDateDisplay(t.date) : '-';
+      html += '<tr>';
+      html += '<td>' + dateStr + '</td>';
+      html += '<td>' + (t.branch || '-') + '</td>';
+      html += '<td>' + (t.category || '-') + '</td>';
+      html += '<td class="amount">$' + Number(t.actual || 0).toLocaleString() + '</td>';
+      html += '<td><span class="points-badge">+' + Number(t.points || 0).toLocaleString() + '</span></td>';
+      html += '</tr>';
+    }
+    
+    html += '</tbody></table>';
+    html += '</div>';
+    container.innerHTML = html;
+  }
+  
+  // ---------- 集點資料 ----------
+  function renderPoints(container, summary) {
+    if (!summary) {
+      container.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span><p>無集點資料</p></div>';
+      return;
+    }
+    
+    var total = Number(summary.totalPoints || 0);
+    var current = Number(summary.currentPoints || 0);
+    var personal = Number(summary.personalPoints || 0);
+    var referral = Number(summary.referralPoints || 0);
+    
+    var percent = total > 0 ? Math.min((current / total) * 100, 100) : 0;
+    
+    var html = '';
+    
+    html += '<div class="points-summary">';
+    
+    var items = [
+      { label: '累積總點數', value: total.toLocaleString() },
+      { label: '目前剩餘點', value: current.toLocaleString() },
+      { label: '個人點數', value: personal.toLocaleString() },
+      { label: '推薦點數', value: referral.toLocaleString() },
+    ];
+    
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      html += '<div class="points-card">';
+      html += '<div class="number">' + item.value + '</div>';
+      html += '<div class="label">' + item.label + '</div>';
+      html += '</div>';
+    }
+    
+    html += '</div>';
+    
+    // 進度條
+    html += '<div class="points-bar-wrap">';
+    html += '<div class="bar-label">';
+    html += '<span>已使用點數</span>';
+    html += '<span>' + Math.round(percent) + '%</span>';
+    html += '</div>';
+    html += '<div class="points-bar">';
+    html += '<div class="points-bar-fill" style="width:' + percent + '%;"></div>';
+    html += '</div>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+  }
+  
+  // ---------- 優惠券 ----------
+  function renderCoupons(container, coupons) {
+    if (!coupons || coupons.length === 0) {
+      container.innerHTML = '<div class="empty-state"><span class="empty-icon">🎫</span><p>尚無優惠券</p></div>';
+      return;
+    }
+    
+    var html = '';
+    html += '<div class="coupon-list">';
+    
+    for (var i = 0; i < coupons.length; i++) {
+      var c = coupons[i];
+      var statusClass = 'available';
+      var statusText = '可使用';
+      
+      if (c.status === '已使用' || c.status === 'used') {
+        statusClass = 'used';
+        statusText = '已使用';
+      } else if (c.status === '已過期' || c.status === 'expired') {
+        statusClass = 'expired';
+        statusText = '已過期';
+      }
+      
+      html += '<div class="coupon-item">';
+      html += '<div>';
+      html += '<div class="coupon-name">' + (c.name || '優惠券') + '</div>';
+      if (c.expireDate) {
+        html += '<div class="coupon-expire">到期日：' + formatDateDisplay(c.expireDate) + '</div>';
+      }
+      html += '</div>';
+      html += '<span class="coupon-status ' + statusClass + '">' + statusText + '</span>';
+      html += '</div>';
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+  }
+  
+  // ================================================================
+  //  輔助函數
+  // ================================================================
+  
+  function showLoading() {
+    tabContent.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  }
+  
+  function showEmptyState(msg) {
+    tabContent.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>' + msg + '</p></div>';
+  }
+  
+  function formatDateDisplay(dateStr) {
+    if (!dateStr) return '-';
+    try {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      var year = d.getFullYear();
+      var month = String(d.getMonth() + 1).padStart(2, '0');
+      var day = String(d.getDate()).padStart(2, '0');
+      return year + '/' + month + '/' + day;
+    } catch(e) {
+      return dateStr;
+    }
+  }
+  
+  // ================================================================
+  //  Tab 切換
+  // ================================================================
+  
+  tabNav.addEventListener('click', function(e) {
+    var tabItem = e.target.closest('.tab-item');
+    if (!tabItem) return;
+    
+    var tab = tabItem.dataset.tab;
+    if (!tab) return;
+    
+    // 更新 active 狀態
+    var allTabs = tabNav.querySelectorAll('.tab-item');
+    for (var i = 0; i < allTabs.length; i++) {
+      allTabs[i].classList.remove('active');
+    }
+    tabItem.classList.add('active');
+    
+    currentTab = tab;
+    // 如果有會員資料，載入對應 tab
+    if (currentMemberId) {
+      var url = GAS_URL + '?action=getMemberDetail&memberId=' + encodeURIComponent(currentMemberId);
+      showLoading();
+      
+      fetch(url)
+        .then(function(response) { return response.json(); })
+        .then(function(result) {
+          if (result.success && result.data) {
+            renderTabContent(currentTab, result.data);
+          } else {
+            showEmptyState('無法載入資料');
+          }
+        })
+        .catch(function(error) {
+          console.error('Load tab error:', error);
+          showEmptyState('載入失敗');
         });
-      });
-
-      // 登出按鈕
-      const logoutBtn = document.getElementById('logoutBtn');
-      logoutBtn.addEventListener('click', function(e) {
-        showToast('👋 您已成功登出！');
-        console.log('[點擊] 登出');
-        // 實際應用可在此執行登出邏輯
-      });
-
-      // 點擊空白處可隱藏 toast（輔助功能）
-      document.addEventListener('click', function(e) {
-        // 如果點擊的不是 toast 本身，且 toast 是顯示狀態，不強制關閉（讓計時器自動關）
-        // 但我們保留計時器機制，所以不額外處理
-      });
-
-      console.log('✅ 老娘領地已啟動 — 所有按鈕都有反應！');
-    })();
-  </script>
+    } else {
+      showEmptyState('請先搜尋會員');
+    }
+  });
+  
+  // ================================================================
+  //  事件綁定
+  // ================================================================
+  
+  loginBtn.addEventListener('click', doLogin);
+  
+  loginAccount.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') loginPassword.focus();
+  });
+  
+  loginPassword.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+  
+  logoutBtn.addEventListener('click', doLogout);
+  
+  // ================================================================
+  //  初始化
+  // ================================================================
+  
+  // 檢查 session
+  if (!checkSession()) {
+    loginPage.style.display = 'flex';
+    mainContent.style.display = 'none';
+    logoutBtn.style.display = 'none';
+  }
+  
+  // 點擊登入頁面空白處可收起鍵盤
+  loginPage.addEventListener('click', function(e) {
+    if (e.target === loginPage) {
+      document.activeElement && document.activeElement.blur();
+    }
+  });
+  
+  console.log('🏠 老娘領地 會員查詢系統 v1.0');
+  console.log('📌 GAS URL:', GAS_URL);
+</script>
 
 </body>
 </html>
