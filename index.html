@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>老娘領地 - 會員查詢系統</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", sans-serif; background: #f4f7f6; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        .container { width: 100%; max-width: 520px; padding: 20px; margin: 20px auto; }
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 24px; }
+        
+        .header { text-align: center; padding-bottom: 16px; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px; }
+        .header h1 { font-size: 22px; color: #8b0000; }
+        .header .sub { font-size: 13px; color: #999; margin-top: 4px; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: bold; font-size: 14px; color: #333; margin-bottom: 4px; }
+        .form-group input { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; transition: border 0.2s; background: #fafafa; }
+        .form-group input:focus { border-color: #8b0000; outline: none; background: #fff; }
+        .form-group input:disabled { background: #f0f0f0; color: #999; }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #8b0000; color: #fff; }
+        .btn-primary:hover { background: #a00000; }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-logout { background: #eee; color: #666; font-size: 13px; padding: 8px 16px; width: auto; border-radius: 8px; }
+        .btn-logout:hover { background: #ddd; }
+        
+        .staff-info { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f8f9fa; border-radius: 10px; margin-bottom: 16px; font-size: 14px; }
+        .staff-info .name { font-weight: bold; color: #8b0000; }
+        .staff-info .badge { background: #8b0000; color: #fff; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+        
+        .login-error { background: #fff5f5; border: 1px solid #ffd0d0; border-radius: 10px; padding: 10px 14px; color: #d00; font-size: 14px; margin-bottom: 12px; display: none; }
+        .login-error.show { display: block; }
+        
+        .search-result { margin-top: 16px; display: none; }
+        .search-result.show { display: block; }
+        
+        .member-list { margin-top: 12px; }
+        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f8f9fa; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: background 0.2s; border: 1px solid transparent; }
+        .member-item:hover { background: #f0f0f0; border-color: #ddd; }
+        .member-item .info { display: flex; flex-direction: column; }
+        .member-item .info .name { font-weight: bold; color: #333; }
+        .member-item .info .phone { font-size: 13px; color: #888; }
+        .member-item .arrow { color: #ccc; font-size: 18px; }
+        
+        .no-result { text-align: center; padding: 30px 0; color: #999; font-size: 15px; }
+        
+        /* Tabs */
+        .tabs { display: flex; border-bottom: 2px solid #eee; margin: 16px 0 0; overflow-x: auto; }
+        .tab-btn { flex: 1; min-width: 70px; padding: 12px 8px; background: none; border: none; font-size: 13px; font-weight: bold; color: #999; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+        .tab-btn.active { color: #8b0000; border-bottom-color: #8b0000; }
+        .tab-btn:hover { color: #666; }
+        
+        .tab-content { display: none; padding-top: 16px; max-height: 500px; overflow-y: auto; }
+        .tab-content.active { display: block; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+        .info-grid .item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        .info-grid .item .label { color: #888; }
+        .info-grid .item .value { font-weight: 500; color: #333; }
+        .info-grid .item.full { grid-column: 1 / -1; }
+        
+        .point-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .point-box { background: #f8f9fa; border-radius: 10px; padding: 12px 14px; text-align: center; }
+        .point-box .num { font-size: 22px; font-weight: bold; color: #8b0000; }
+        .point-box .label { font-size: 12px; color: #888; margin-top: 2px; }
+        .point-box.sub .num { color: #333; font-size: 18px; }
+        
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        table th { background: #f5f5f5; padding: 8px 10px; text-align: left; font-weight: bold; color: #666; border-bottom: 2px solid #eee; position: sticky; top: 0; z-index: 1; }
+        table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; color: #333; }
+        table tr:hover td { background: #fafafa; }
+        
+        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .status-badge.used { background: #e8f5e9; color: #2e7d32; }
+        .status-badge.unused { background: #fff3e0; color: #e65100; }
+        .status-badge.expired { background: #ffebee; color: #c62828; }
+        
+        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: none; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 12px; }
+        .loading-overlay.show { display: flex; }
+        .loading-spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top-color: #8b0000; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: #666; font-size: 15px; }
+        
+        .hidden { display: none !important; }
+        .mt-8 { margin-top: 8px; }
+        
+        @media (max-width: 480px) {
+            .container { padding: 10px; }
+            .card { padding: 16px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .point-summary { grid-template-columns: 1fr 1fr; }
+            table { font-size: 12px; }
+            table th, table td { padding: 6px 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">載入中...</div>
+</div>
+
+<div class="container">
+    <div class="card">
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>👩‍💼 老娘領地</h1>
+            <div class="sub">會員查詢系統</div>
+        </div>
+        
+        <!-- ==================== 登入區塊 ==================== -->
+        <div id="loginSection">
+            <div class="login-error" id="loginError"></div>
+            <div class="form-group">
+                <label>👤 帳號</label>
+                <input type="text" id="loginAccount" placeholder="請輸入店員帳號" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>🔒 密碼</label>
+                <input type="password" id="loginPassword" placeholder="請輸入密碼" autocomplete="current-password">
+            </div>
+            <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">🔓 登入</button>
+            <div style="text-align:center; margin-top:12px; font-size:12px; color:#ccc;">僅供店員查詢使用</div>
+        </div>
+        
+        <!-- ==================== 查詢區塊（登入後） ==================== -->
+        <div id="querySection" style="display:none;">
+            
+            <!-- 店員資訊 -->
+            <div class="staff-info">
+                <div>
+                    <span class="name" id="staffNameDisplay">-</span>
+                    <span class="badge" id="staffRoleDisplay">夥伴</span>
+                    <span style="font-size:12px; color:#999; margin-left:8px;" id="staffBranchDisplay"></span>
+                </div>
+                <button class="btn-logout" onclick="doLogout()">🚪 登出</button>
+            </div>
+            
+            <!-- 查詢表單 -->
+            <div class="form-group">
+                <label>📛 會員姓名</label>
+                <input type="text" id="searchName" placeholder="請輸入姓名（可部分比對）" onkeydown="if(event.key==='Enter') doSearch()">
+            </div>
+            <div class="form-group">
+                <label>📞 會員電話</label>
+                <input type="text" id="searchPhone" placeholder="請輸入完整電話號碼" onkeydown="if(event.key==='Enter') doSearch()">
+            </div>
+            <button class="btn btn-primary" id="searchBtn" onclick="doSearch()">🔍 查詢</button>
+            
+            <!-- 查詢結果 -->
+            <div class="search-result" id="searchResult">
+                
+                <!-- 會員列表 -->
+                <div id="memberListSection">
+                    <div style="font-weight:bold; color:#666; font-size:14px; margin-bottom:8px;">📋 請選擇會員：</div>
+                    <div class="member-list" id="memberList"></div>
+                </div>
+                
+                <!-- 會員詳細資料（Tab 切換） -->
+                <div id="detailSection" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <span style="font-weight:bold; color:#8b0000; font-size:16px;" id="detailMemberName">-</span>
+                        <span style="font-size:12px; color:#999;" id="detailMemberId">ID: -</span>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="profile" onclick="switchTab('profile')">👤 會員資料</button>
+                        <button class="tab-btn" data-tab="transactions" onclick="switchTab('transactions')">📊 消費紀錄</button>
+                        <button class="tab-btn" data-tab="points" onclick="switchTab('points')">💰 集點資料</button>
+                        <button class="tab-btn" data-tab="coupons" onclick="switchTab('coupons')">🎫 優惠券</button>
+                    </div>
+                    
+                    <!-- Tab 1: 會員資料 -->
+                    <div class="tab-content active" id="tab-profile">
+                        <div class="info-grid" id="profileGrid"></div>
+                    </div>
+                    
+                    <!-- Tab 2: 消費紀錄 -->
+                    <div class="tab-content" id="tab-transactions">
+                        <div class="table-wrap"><table><thead><tr>
+                            <th>日期</th><th>分店</th><th>分類</th><th>金額</th><th>餐券</th><th>折抵</th><th>實付</th><th>獲得點</th>
+                        </tr></thead><tbody id="transactionTableBody"></tbody></table></div>
+                        <div id="transactionEmpty" style="text-align:center; padding:20px; color:#999; display:none;">尚無消費紀錄</div>
+                    </div>
+                    
+                    <!-- Tab 3: 集點資料 -->
+                    <div class="tab-content" id="tab-points">
+                        <div class="point-summary" id="pointSummary"></div>
+                        <div style="margin-top:12px; font-size:13px; color:#888; text-align:center;">* 資料來源：流水帳紀錄彙總</div>
+                    </div>
+                    
+                    <!-- Tab 4: 優惠券 -->
+                    <div class="tab-content" id="tab-coupons">
+                        <div class="table-wrap"><table><thead><tr>
+                            <th>優惠券名稱</th><th>狀態</th><th>到期日</th>
+                        </tr></thead><tbody id="couponTableBody"></tbody></table></div>
+                        <div id="couponEmpty" style="text-align:center; padding:20px; color:#999; display:none;">尚無優惠券</div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+// ==================== 設定 ====================
+var GAS_URL = "https://script.google.com/macros/s/AKfycbwUp92g3PDd62SFceEtlPYnzGejtcP3izzPdveC1rOQE8ml6MDwBe_c5q6VGPV8gbNs/exec";
+var loginId = '';
+var currentMemberId = '';
+var currentMemberData = null;
+
+// ==================== 工具函數 ====================
+function showLoading(text) {
+    document.getElementById('loadingText').innerText = text || '載入中...';
+    document.getElementById('loadingOverlay').classList.add('show');
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+function showToast(msg) {
+    var toast = document.createElement('div');
+    toast.innerText = msg;
+    toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:#fff; padding:10px 20px; border-radius:30px; z-index:99999; font-size:14px; max-width:90%; text-align:center;';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 3000);
+}
+
+function getClientIp() {
+    // 簡單取得 IP（透過第三方服務）
+    return fetch('https://api.ipify.org?format=json')
+        .then(function(res) { return res.json(); })
+        .then(function(data) { return data.ip; })
+        .catch(function() { return ''; });
+}
+
+// ==================== 登入 ====================
+function doLogin() {
+    var account = document.getElementById('loginAccount').value.trim();
+    var password = document.getElementById('loginPassword').value.trim();
+    var errorEl = document.getElementById('loginError');
+    
+    errorEl.classList.remove('show');
+    
+    if (!account || !password) {
+        errorEl.innerText = '請輸入帳號和密碼';
+        errorEl.classList.add('show');
+        return;
+    }
+    
+    var btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerText = '登入中...';
+    showLoading('驗證中...');
+    
+    getClientIp().then(function(ip) {
+        var url = GAS_URL + '?action=staffLogin&account=' + encodeURIComponent(account) + '&password=' + encodeURIComponent(password) + '&clientIp=' + encodeURIComponent(ip) + '&t=' + Date.now();
+        
+        return fetch(url);
+    }).then(function(res) {
+        return res.json();
+    }).then(function(data) {
+        hideLoading();
+        btn.disabled = false;
+        btn.innerText = '🔓 登入';
+        
+        if (data.success) {
+            loginId = data.loginId || account;
+            document.getElementById('staffNameDisplay').innerText = data.name || account;
+            document.getElementById('staffRoleDisplay').innerText = data.role || '夥伴';
+            document.getElementById('staffBranchDisplay').innerText = data.branch || '';
+            
+            if (data.isNonBusiness) {
+                showToast('⚠️ 非營業時間登入');
+            }
+            
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('querySection').style.display = 'block';
+            document.getElementById('searchName').focus();
+            showToast('✅ ' + data.message);
+            
+            // 記錄登出監聽
+            window.addEventListener('beforeunload', function() {
+                navigator.sendBeacon(GAS_URL + '?action=staffLogout&loginId=' + encodeURIComponent(loginId));
+            });
+            
+        } else {
+            errorEl.innerText = '❌ ' + (data.message || '登入失敗');
+            errorEl.classList.add('show');
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginPassword').focus();
+        }
+    }).catch(function(err) {
+        hideLoading();
+        btn.disabled = false;
+        btn.innerText = '🔓 登入';
+        errorEl.innerText = '❌ 連線失敗：' + err.message;
+        errorEl.classList.add('show');
+    });
+}
+
+// ==================== 登出 ====================
+function doLogout() {
+    if (!confirm('確定要登出嗎？')) return;
+    
+    showLoading('正在登出...');
+    
+    var url = GAS_URL + '?action=staffLogout&loginId=' + encodeURIComponent(loginId) + '&t=' + Date.now();
+    fetch(url).then(function() {
+        hideLoading();
+        loginId = '';
+        document.getElementById('querySection').style.display = 'none';
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('loginAccount').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('searchResult').classList.remove('show');
+        document.getElementById('searchName').value = '';
+        document.getElementById('searchPhone').value = '';
+        showToast('👋 已登出');
+    }).catch(function() {
+        hideLoading();
+        showToast('登出失敗，請關閉頁面');
+    });
+}
+
+// ==================== 查詢會員 ====================
+function doSearch() {
+    var name = document.getElementById('searchName').value.trim();
+    var phone = document.getElementById('searchPhone').value.trim();
+    
+    if (!name && !phone) {
+        showToast('請輸入姓名或電話');
+        return;
+    }
+    
+    var btn = document.getElementById('searchBtn');
+    btn.disabled = true;
+    btn.innerText = '查詢中...';
+    showLoading('查詢中...');
+    
+    var url = GAS_URL + '?action=searchMember&name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone) + '&t=' + Date.now();
+    
+    fetch(url)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            hideLoading();
+            btn.disabled = false;
+            btn.innerText = '🔍 查詢';
+            
+            var resultEl = document.getElementById('searchResult');
+            var listEl = document.getElementById('memberList');
+            var detailEl = document.getElementById('detailSection');
+            
+            if (data.success && data.members && data.members.length > 0) {
+                resultEl.classList.add('show');
+                detailEl.style.display = 'none';
+                
+                var html = '';
+                for (var i = 0; i < data.members.length; i++) {
+                    var m = data.members[i];
+                    html += '<div class="member-item" onclick="selectMember(\'' + m.memberId + '\')">';
+                    html += '<div class="info"><span class="name">' + m.name + '</span><span class="phone">📞 ' + m.phone + ' | 🏷️ ' + m.level + '</span></div>';
+                    html += '<div class="arrow">›</div>';
+                    html += '</div>';
+                }
+                listEl.innerHTML = html;
+                
+            } else {
+                resultEl.classList.add('show');
+                detailEl.style.display = 'none';
+                listEl.innerHTML = '<div class="no-result">😕 ' + (data.message || '查無會員，請確認姓名和電話是否正確') + '</div>';
+            }
+        })
+        .catch(function(err) {
+            hideLoading();
+            btn.disabled = false;
+            btn.innerText = '🔍 查詢';
+            showToast('❌ 查詢失敗：' + err.message);
+        });
+}
+
+// ==================== 選擇會員 ====================
+function selectMember(memberId) {
+    currentMemberId = memberId;
+    showLoading('載入會員資料...');
+    
+    var url = GAS_URL + '?action=getMemberDetail&memberId=' + encodeURIComponent(memberId) + '&t=' + Date.now();
+    
+    fetch(url)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            hideLoading();
+            
+            if (data.success && data.data) {
+                currentMemberData = data.data;
+                renderMemberDetail(data.data);
+            } else {
+                showToast('❌ ' + (data.message || '載入失敗'));
+            }
+        })
+        .catch(function(err) {
+            hideLoading();
+            showToast('❌ 載入失敗：' + err.message);
+        });
+}
+
+// ==================== 渲染會員詳細資料 ====================
+function renderMemberDetail(data) {
+    var member = data.memberData;
+    if (!member) return;
+    
+    document.getElementById('detailMemberName').innerText = member.name || '-';
+    document.getElementById('detailMemberId').innerText = 'ID: ' + (currentMemberId || '-');
+    document.getElementById('detailSection').style.display = 'block';
+    document.getElementById('memberListSection').style.display = 'none';
+    
+    // === Tab 1: 會員資料 ===
+    var profileHtml = '';
+    var fields = [
+        { label: '姓名', value: member.name },
+        { label: '電話', value: member.phone },
+        { label: '生日', value: member.birthday },
+        { label: '會員等級', value: member.level },
+        { label: '會員狀態', value: member.status },
+        { label: '總消費金額', value: '$' + Number(member.totalSpend || 0).toLocaleString() },
+        { label: '最後消費日期', value: member.lastVisit || '無紀錄' },
+        { label: '累積總點數', value: Number(member.totalPoints || 0).toLocaleString() },
+        { label: '目前剩餘點', value: Number(member.currentPoints || 0).toLocaleString() }
+    ];
+    for (var i = 0; i < fields.length; i++) {
+        var f = fields[i];
+        profileHtml += '<div class="item"><span class="label">' + f.label + '</span><span class="value">' + (f.value || '-') + '</span></div>';
+    }
+    document.getElementById('profileGrid').innerHTML = profileHtml;
+    
+    // === Tab 2: 消費紀錄 ===
+    var txBody = document.getElementById('transactionTableBody');
+    var txEmpty = document.getElementById('transactionEmpty');
+    var txs = data.transactions || [];
+    
+    if (txs.length > 0) {
+        txEmpty.style.display = 'none';
+        var html = '';
+        for (var i = 0; i < txs.length; i++) {
+            var t = txs[i];
+            html += '<tr>';
+            html += '<td>' + (t.date || '-') + '</td>';
+            html += '<td>' + (t.branch || '-') + '</td>';
+            html += '<td>' + (t.category || '-') + '</td>';
+            html += '<td>' + Number(t.amount || 0).toLocaleString() + '</td>';
+            html += '<td>' + Number(t.ticket || 0).toLocaleString() + '</td>';
+            html += '<td>' + Number(t.redeem || 0).toLocaleString() + '</td>';
+            html += '<td>' + Number(t.actual || 0).toLocaleString() + '</td>';
+            html += '<td>' + Number(t.points || 0).toLocaleString() + '</td>';
+            html += '</tr>';
+        }
+        txBody.innerHTML = html;
+    } else {
+        txEmpty.style.display = 'block';
+        txBody.innerHTML = '';
+    }
+    
+    // === Tab 3: 集點資料 ===
+    var pts = data.pointSummary || {};
+    var pointHtml = '';
+    pointHtml += '<div class="point-box"><div class="num">' + Number(pts.totalPoints || 0).toLocaleString() + '</div><div class="label">📊 累積總點數</div></div>';
+    pointHtml += '<div class="point-box"><div class="num">' + Number(pts.currentPoints || 0).toLocaleString() + '</div><div class="label">💳 目前剩餘點</div></div>';
+    pointHtml += '<div class="point-box sub"><div class="num">' + Number(pts.personalPoints || 0).toLocaleString() + '</div><div class="label">👤 個人點數</div></div>';
+    pointHtml += '<div class="point-box sub"><div class="num">' + Number(pts.referralPoints || 0).toLocaleString() + '</div><div class="label">👥 推薦點數</div></div>';
+    document.getElementById('pointSummary').innerHTML = pointHtml;
+    
+    // === Tab 4: 優惠券 ===
+    var couponBody = document.getElementById('couponTableBody');
+    var couponEmpty = document.getElementById('couponEmpty');
+    var coupons = data.coupons || [];
+    
+    if (coupons.length > 0) {
+        couponEmpty.style.display = 'none';
+        var html = '';
+        for (var i = 0; i < coupons.length; i++) {
+            var c = coupons[i];
+            var statusClass = '';
+            if (c.status === '已使用') statusClass = 'used';
+            else if (c.status === '已過期') statusClass = 'expired';
+            else statusClass = 'unused';
+            
+            html += '<tr>';
+            html += '<td>' + (c.name || '-') + '</td>';
+            html += '<td><span class="status-badge ' + statusClass + '">' + (c.status || '未使用') + '</span></td>';
+            html += '<td>' + (c.expireDate || '-') + '</td>';
+            html += '</tr>';
+        }
+        couponBody.innerHTML = html;
+    } else {
+        couponEmpty.style.display = 'block';
+        couponBody.innerHTML = '';
+    }
+    
+    // 切換到第一個 Tab
+    switchTab('profile');
+}
+
+// ==================== Tab 切換 ====================
+function switchTab(tabId) {
+    // 更新 Tab 按鈕
+    var btns = document.querySelectorAll('.tab-btn');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle('active', btns[i].dataset.tab === tabId);
+    }
+    
+    // 更新 Tab 內容
+    var contents = document.querySelectorAll('.tab-content');
+    for (var i = 0; i < contents.length; i++) {
+        contents[i].classList.toggle('active', contents[i].id === 'tab-' + tabId);
+    }
+}
+
+// ==================== 鍵盤 Enter 事件 ====================
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        var active = document.activeElement;
+        if (active && (active.id === 'searchName' || active.id === 'searchPhone')) {
+            doSearch();
+        }
+    }
+});
+
+// ==================== 初始化 ====================
+console.log('✅ 查詢系統已載入');
+</script>
+</body>
+</html>
