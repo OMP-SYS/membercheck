@@ -592,7 +592,31 @@
       display: inline-block;
       white-space: nowrap;
     }
-    
+    /* 點數色塊 */
+.points-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+.points-badge.earn {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.points-badge.redeem {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+.points-badge.share {
+  background: #e3f2fd;
+  color: #1565c0;
+}
     /* ==================== 集點資料 ==================== */
     .points-summary {
       display: grid;
@@ -1290,50 +1314,70 @@ loginPasswordInput.addEventListener('blur', function() {
   // ================================================================
   
   function renderRecords(container, transactions) {
-    if (!transactions || transactions.length === 0) {
-      container.innerHTML = '<div class="empty-state"><span class="empty-icon">🧾</span><p>尚無消費紀錄</p></div>';
-      return;
-    }
-    
-    var html = '';
-    html += '<div class="record-table-wrap">';
-    html += '<table class="record-table">';
-    html += '<thead><tr>';
-    html += '<th>交易日期</th>';
-    html += '<th>分店</th>';
-    html += '<th>分類</th>';
-    html += '<th>消費金額</th>';
-    html += '<th>使用餐券</th>';
-    html += '<th>點數折抵</th>';
-    html += '<th>實際付款</th>';
-    html += '<th>獲得點數</th>';
-    html += '<th>備註</th>';
-    html += '<th>分享回饋</th>';
-    html += '</tr></thead>';
-    html += '<tbody>';
-    
-    for (var i = 0; i < transactions.length; i++) {
-      var t = transactions[i];
-      var dateStr = t.date ? formatDateDisplay(t.date) : '-';
-      html += '<tr>';
-      html += '<td>' + dateStr + '</td>';
-      html += '<td>' + (t.branch || '-') + '</td>';
-      html += '<td>' + (t.category || '-') + '</td>';
-      html += '<td class="amount">$' + Number(t.amount || 0).toLocaleString() + '</td>';
-      html += '<td>' + (t.ticket ? '$' + Number(t.ticket).toLocaleString() : '-') + '</td>';
-      html += '<td>' + (t.redeem ? Number(t.redeem).toLocaleString() + '點' : '-') + '</td>';
-      html += '<td class="amount">$' + Number(t.actual || 0).toLocaleString() + '</td>';
-      html += '<td><span class="points-badge">+' + Number(t.points || 0).toLocaleString() + '</span></td>';
-      html += '<td>' + (t.note || '-') + '</td>';
-      html += '<td>' + (t.sharePoints ? Number(t.sharePoints).toLocaleString() + '點' : '-') + '</td>';
-      html += '</tr>';
-    }
-    
-    html += '</tbody></table>';
-    html += '</div>';
-    container.innerHTML = html;
+  if (!transactions || transactions.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="empty-icon">🧾</span><p>尚無消費紀錄</p></div>';
+    return;
   }
   
+  var html = '';
+  html += '<div class="record-table-wrap">';
+  html += '<table class="record-table">';
+  html += '<thead><tr>';
+  html += '<th>交易日期</th>';
+  html += '<th>分店</th>';
+  html += '<th>分類</th>';
+  html += '<th>消費金額</th>';
+  html += '<th>使用餐券</th>';
+  html += '<th>點數折抵</th>';
+  html += '<th>實際付款</th>';
+  html += '<th>獲得點數</th>';
+  html += '<th>備註</th>';
+  html += '<th>分享回饋</th>';
+  html += '</tr></thead>';
+  html += '<tbody>';
+  
+  for (var i = 0; i < transactions.length; i++) {
+    var t = transactions[i];
+    var dateStr = t.date ? formatDateDisplay(t.date) : '-';
+    
+    // 🔥 點數折抵：有色塊（負數）
+    var redeemDisplay = '-';
+    if (t.redeem && t.redeem > 0) {
+      redeemDisplay = '<span class="points-badge redeem">-' + Number(t.redeem).toLocaleString() + '</span>';
+    }
+    
+    // 🔥 獲得點數：有色塊（正數）
+    var pointsDisplay = '-';
+    if (t.points && t.points > 0) {
+      pointsDisplay = '<span class="points-badge earn">+' + Number(t.points).toLocaleString() + '</span>';
+    }
+    
+    // 🔥 分享回饋點數：只有本人有推薦人時才顯示（或者 sharePoints > 0 才顯示）
+    // 嗨購沒有推薦人，所以 sharePoints 應該為 0，不顯示
+    var shareDisplay = '-';
+    if (t.sharePoints && t.sharePoints > 0) {
+      // 只有當 sharePoints > 0 才顯示有色塊
+      shareDisplay = '<span class="points-badge share">+' + Number(t.sharePoints).toLocaleString() + '</span>';
+    }
+    
+    html += '<tr>';
+    html += '<td>' + dateStr + '</td>';
+    html += '<td>' + (t.branch || '-') + '</td>';
+    html += '<td>' + (t.category || '-') + '</td>';
+    html += '<td class="amount">$' + Number(t.amount || 0).toLocaleString() + '</td>';
+    html += '<td>' + (t.ticket ? '$' + Number(t.ticket).toLocaleString() : '-') + '</td>';
+    html += '<td>' + redeemDisplay + '</td>';
+    html += '<td class="amount">$' + Number(t.actual || 0).toLocaleString() + '</td>';
+    html += '<td>' + pointsDisplay + '</td>';
+    html += '<td>' + (t.note || '-') + '</td>';
+    html += '<td>' + shareDisplay + '</td>';
+    html += '</tr>';
+  }
+  
+  html += '</tbody></table>';
+  html += '</div>';
+  container.innerHTML = html;
+}
   // ================================================================
   //  3. 集點資料（彙總）
   // ================================================================
