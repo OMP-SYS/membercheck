@@ -1252,6 +1252,9 @@ loginPasswordInput.addEventListener('blur', function() {
       { label: '最後消費日期', value: member.lastVisit || '無紀錄' },
       { label: '會員狀態', value: member.status || '活躍', isStatus: true },
       { label: '會員等級', value: member.level || '一般會員' },
+      // 🔥 新增：分紅狀態 + 分紅凍結日
+      { label: '分紅狀態', value: member.分紅狀態 || member.dividendStatus || '未啟動' },
+      { label: '分紅凍結日', value: member.分紅凍結日 || member.dividendFreezeDate || '-' }
     ];
     
     for (var i = 0; i < fields.length; i++) {
@@ -1264,6 +1267,15 @@ loginPasswordInput.addEventListener('blur', function() {
         cls += ' ' + statusClass;
       }
       
+      // 🔥 分紅狀態如果有值，加上顏色
+      if (f.label === '分紅狀態') {
+        if (f.value === '啟動中') {
+          cls += ' status-active';
+        } else if (f.value === '未啟動') {
+          cls += ' status-inactive';
+        }
+      }
+      
       html += '<div class="' + cls + '">';
       html += '<div class="label">' + f.label + '</div>';
       html += '<div class="value">' + valueHtml + '</div>';
@@ -1272,8 +1284,7 @@ loginPasswordInput.addEventListener('blur', function() {
     
     html += '</div>';
     container.innerHTML = html;
-  }
-  
+}
   // ================================================================
   //  2. 消費紀錄（流水帳紀錄）
   // ================================================================
@@ -1329,26 +1340,32 @@ loginPasswordInput.addEventListener('blur', function() {
   
   function renderPoints(container, member) {
     if (!member) {
-      container.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span><p>無集點資料</p></div>';
+      container.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span><p>無點數資料</p></div>';
       return;
     }
     
-    var totalPoints = Number(member.totalPoints || 0);
-    var currentPoints = Number(member.currentPoints || 0);
-    var personalPoints = Number(member.personalPoints || 0);
-    var referralPoints = Number(member.referralPoints || 0);
-    var totalCalculated = personalPoints + referralPoints;
+    // 🔥 計算方式
+    var totalPoints = Number(member.totalPoints || 0);           // H欄：累積總點數
+    var referralPoints = Number(member.referralPoints || 0);     // Z欄：推薦點數
+    var personalPoints = totalPoints - referralPoints;           // 累計個人點數 = H欄 - Z欄
+    var currentPoints = Number(member.currentPoints || 0);       // I欄：目前剩餘點
+    var expiringPersonal = Number(member.expiringPersonal || 0); // AD欄：本月到期個人點數
+    var expiringReferral = Number(member.expiringReferral || 0); // AE欄：本月到期推薦點數
     
     var percent = totalPoints > 0 ? Math.min((currentPoints / totalPoints) * 100, 100) : 0;
     
     var html = '';
     
-    // 彙總卡片
+    // ============================================================
+    //  彙總卡片（4 個）
+    // ============================================================
     html += '<div class="points-summary">';
     
     var items = [
-      { label: '累積總點數', value: totalPoints.toLocaleString() },
-      { label: '目前剩餘點', value: currentPoints.toLocaleString() },
+      { label: '累計個人點數', value: personalPoints.toLocaleString() },
+      { label: '累計推薦點數', value: referralPoints.toLocaleString() },
+      { label: '本月到期個人點數', value: expiringPersonal.toLocaleString() },
+      { label: '本月到期推薦點數', value: expiringReferral.toLocaleString() }
     ];
     
     for (var i = 0; i < items.length; i++) {
@@ -1361,23 +1378,9 @@ loginPasswordInput.addEventListener('blur', function() {
     
     html += '</div>';
     
-    // 詳細明細
-    html += '<div class="points-detail">';
-    html += '<div class="detail-row">';
-    html += '<span class="detail-label">📊 個人點數</span>';
-    html += '<span class="detail-value points-color">' + personalPoints.toLocaleString() + ' 點</span>';
-    html += '</div>';
-    html += '<div class="detail-row">';
-    html += '<span class="detail-label">📊 推薦點數</span>';
-    html += '<span class="detail-value points-color">' + referralPoints.toLocaleString() + ' 點</span>';
-    html += '</div>';
-    html += '<div class="detail-row">';
-    html += '<span class="detail-label">📊 個人+推薦總和</span>';
-    html += '<span class="detail-value points-color">' + totalCalculated.toLocaleString() + ' 點</span>';
-    html += '</div>';
-    html += '</div>';
-    
-    // 使用進度
+    // ============================================================
+    //  使用進度條
+    // ============================================================
     html += '<div style="margin-top:12px;background:#ffffff;padding:14px 16px;border-radius:10px;border:1px solid #f0ebe6;">';
     html += '<div class="bar-label">';
     html += '<span>已使用點數</span>';
@@ -1389,83 +1392,51 @@ loginPasswordInput.addEventListener('blur', function() {
     html += '</div>';
     
     container.innerHTML = html;
-  }
-  
+}
   // ================================================================
   //  4. 優惠券（Firebase + coupons）
   // ================================================================
   
-  function renderCoupons(container, coupons) {
-    if (!coupons || coupons.length === 0) {
-      container.innerHTML = '<div class="empty-state"><span class="empty-icon">🎫</span><p>尚無優惠券</p></div>';
-      return;
-    }
-    
-    // 統計
-    var available = 0;
-    var used = 0;
-    var expired = 0;
-    
-    for (var i = 0; i < coupons.length; i++) {
-      var status = coupons[i].status || '未使用';
-      if (status === '未使用' || status === 'available') {
-        available++;
-      } else if (status === '已使用' || status === 'used') {
-        used++;
-      } else if (status === '已過期' || status === 'expired') {
-        expired++;
-      }
-    }
-    
-    var html = '';
-    
-    // 統計卡片
-    html += '<div class="coupon-stats">';
-    html += '<div class="coupon-stat-card">';
-    html += '<div class="number available">' + available + '</div>';
-    html += '<div class="label">✅ 未使用</div>';
-    html += '</div>';
-    html += '<div class="coupon-stat-card">';
-    html += '<div class="number used">' + used + '</div>';
-    html += '<div class="label">📌 已使用</div>';
-    html += '</div>';
-    html += '<div class="coupon-stat-card">';
-    html += '<div class="number expired">' + expired + '</div>';
-    html += '<div class="label">⏰ 已過期</div>';
-    html += '</div>';
-    html += '</div>';
-    
-    // 清單
-    html += '<div class="coupon-list">';
-    
-    for (var i = 0; i < coupons.length; i++) {
-      var c = coupons[i];
-      var statusClass = 'available';
-      var statusText = '未使用';
-      
-      if (c.status === '已使用' || c.status === 'used') {
-        statusClass = 'used';
-        statusText = '已使用';
-      } else if (c.status === '已過期' || c.status === 'expired') {
-        statusClass = 'expired';
-        statusText = '已過期';
-      }
-      
-      html += '<div class="coupon-item">';
-      html += '<div>';
-      html += '<div class="coupon-name">' + (c.name || '優惠券') + '</div>';
-      if (c.expireDate) {
-        html += '<div class="coupon-expire">⏰ 到期日：' + formatDateDisplay(c.expireDate) + '</div>';
-      }
-      html += '</div>';
-      html += '<span class="coupon-status ' + statusClass + '">' + statusText + '</span>';
-      html += '</div>';
-    }
-    
-    html += '</div>';
-    container.innerHTML = html;
+  // ==================== 渲染優惠券（只顯示已使用和已過期） ====================
+function renderCoupons(container, coupons) {
+  if (!coupons || coupons.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="empty-icon">🎫</span><p>尚無優惠券使用紀錄</p></div>';
+    return;
   }
   
+  // 過濾出「已使用」和「已過期」
+  var usedCoupons = coupons.filter(function(c) {
+    return c.status === "已使用" || c.status === "已過期";
+  });
+  
+  if (usedCoupons.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="empty-icon">🎫</span><p>尚無優惠券使用紀錄</p></div>';
+    return;
+  }
+  
+  var html = '';
+  html += '<div class="coupon-list">';
+  
+  for (var i = 0; i < usedCoupons.length; i++) {
+    var c = usedCoupons[i];
+    var statusClass = c.status === "已使用" ? "used" : "expired";
+    var statusText = c.status;
+    var dateLabel = c.status === "已使用" ? "使用日期" : "到期日";
+    var dateValue = c.status === "已使用" ? c.redeemedAt : c.expireDate;
+    var displayDate = dateValue ? formatDateDisplay(dateValue) : "";
+    
+    html += '<div class="coupon-item">';
+    html += '<div class="coupon-info">';
+    html += '<div class="coupon-name">' + (c.name || "優惠券") + '</div>';
+    html += '<div class="coupon-date">' + dateLabel + '：' + displayDate + '</div>';
+    html += '</div>';
+    html += '<span class="coupon-status ' + statusClass + '">' + statusText + '</span>';
+    html += '</div>';
+  }
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
   // ================================================================
   //  輔助函數
   // ================================================================
