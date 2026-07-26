@@ -1058,16 +1058,20 @@
     loginError.className = 'login-error';
   }
   
+ 
   function showMainContent(sessionData) {
-    loginPage.style.display = 'none';
-    mainContent.style.display = 'block';
-    logoutBtn.style.display = 'flex';
-    staffInfo.style.display = 'flex';
-    staffName.textContent = sessionData.name || '店員';
-    staffBranch.textContent = sessionData.branch ? ' (' + sessionData.branch + ')' : '';
-    
-    showEmptyState('🔍', '請輸入姓名或電話搜尋會員');
-  }
+  loginPage.style.display = 'none';
+  mainContent.style.display = 'block';
+  logoutBtn.style.display = 'flex';
+  staffInfo.style.display = 'flex';
+  staffName.textContent = sessionData.name || '店員';
+  staffBranch.textContent = sessionData.branch ? ' (' + sessionData.branch + ')' : '';
+  
+  // 🔥 啟動閒置計時器
+  resetIdleTimer();
+  
+  showEmptyState('🔍', '請輸入姓名或電話搜尋會員');
+}
   // ================================================================
 //  密碼顯示切換
 // ================================================================
@@ -1095,31 +1099,106 @@ loginPasswordInput.addEventListener('blur', function() {
   // ================================================================
   //  登出功能
   // ================================================================
-  
   function doLogout() {
-    var session = sessionStorage.getItem('staffSession');
-    if (session) {
-      try {
-        var data = JSON.parse(session);
-        var url = GAS_URL + '?action=staffLogout&loginId=' + encodeURIComponent(data.loginId);
-        fetch(url).catch(function() {});
-      } catch(e) {}
-    }
-    
-    sessionStorage.removeItem('staffSession');
-    currentMemberId = null;
-    currentMemberData = null;
-    searchResults = [];
-    
-    loginPage.style.display = 'flex';
-    mainContent.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    staffInfo.style.display = 'none';
-    loginAccount.value = '';
-    loginPassword.value = '';
-    hideLoginError();
+  // 🔥 清除閒置計時器
+  if (idleTimer) {
+    clearTimeout(idleTimer);
+    idleTimer = null;
+  }
+  if (logoutWarningTimer) {
+    clearTimeout(logoutWarningTimer);
+    logoutWarningTimer = null;
   }
   
+  var session = sessionStorage.getItem('staffSession');
+  if (session) {
+    try {
+      var data = JSON.parse(session);
+      var url = GAS_URL + '?action=staffLogout&loginId=' + encodeURIComponent(data.loginId);
+      fetch(url).catch(function() {});
+    } catch(e) {}
+  }
+  
+  sessionStorage.removeItem('staffSession');
+  currentMemberId = null;
+  currentMemberData = null;
+  searchResults = [];
+  
+  loginPage.style.display = 'flex';
+  mainContent.style.display = 'none';
+  logoutBtn.style.display = 'none';
+  staffInfo.style.display = 'none';
+  loginAccount.value = '';
+  loginPassword.value = '';
+  hideLoginError();
+}
+  // ================================================================
+//  閒置登出機制（10 分鐘）
+// ================================================================
+
+var idleTimer = null;
+var logoutWarningTimer = null;
+var IDLE_TIMEOUT = 10 * 60 * 1000; // 10 分鐘
+
+function resetIdleTimer() {
+  // 清除舊計時器
+  if (idleTimer) {
+    clearTimeout(idleTimer);
+    idleTimer = null;
+  }
+  if (logoutWarningTimer) {
+    clearTimeout(logoutWarningTimer);
+    logoutWarningTimer = null;
+  }
+  
+  // 設定 10 分鐘計時器
+  idleTimer = setTimeout(function() {
+    // 9分30秒時提醒
+    logoutWarningTimer = setTimeout(function() {
+      showIdleLogoutWarning();
+    }, IDLE_TIMEOUT - 30000);
+    
+    // 10 分鐘到，強制登出
+    forceLogout();
+  }, IDLE_TIMEOUT);
+}
+
+function showIdleLogoutWarning() {
+  if (confirm("⏰ 您已閒置超過 9 分鐘，將在 30 秒後自動登出。\n請點擊「確定」繼續使用，或「取消」立即登出。")) {
+    resetIdleTimer();
+  } else {
+    forceLogout();
+  }
+}
+
+function forceLogout() {
+  // 清除計時器
+  if (idleTimer) {
+    clearTimeout(idleTimer);
+    idleTimer = null;
+  }
+  if (logoutWarningTimer) {
+    clearTimeout(logoutWarningTimer);
+    logoutWarningTimer = null;
+  }
+  
+  // 清除 Session
+  sessionStorage.removeItem('staffSession');
+  currentMemberId = null;
+  currentMemberData = null;
+  searchResults = [];
+  
+  // 顯示登入畫面
+  loginPage.style.display = 'flex';
+  mainContent.style.display = 'none';
+  logoutBtn.style.display = 'none';
+  staffInfo.style.display = 'none';
+  loginAccount.value = '';
+  loginPassword.value = '';
+  hideLoginError();
+  
+  alert('⏰ 因閒置過久，已自動登出，請重新登入。');
+}
   // ================================================================
   //  搜尋會員
   // ================================================================
@@ -1576,9 +1655,29 @@ function renderCoupons(container, coupons) {
     if (e.key === 'Enter') doSearch();
   });
   
-  // ================================================================
-  //  初始化
-  // ================================================================
+ // ================================================================
+//  監聽使用者活動（閒置登出用）
+// ================================================================
+
+function setupIdleListeners() {
+  var events = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+  
+  for (var i = 0; i < events.length; i++) {
+    document.addEventListener(events[i], function() {
+      var session = sessionStorage.getItem('staffSession');
+      if (session) {
+        resetIdleTimer();
+      }
+    });
+  }
+}
+
+// ================================================================
+//  初始化
+// ================================================================
+
+function init() {
+  setupIdleListeners();  // 🔥 設定監聽器
   
   if (!checkSession()) {
     loginPage.style.display = 'flex';
@@ -1589,6 +1688,10 @@ function renderCoupons(container, coupons) {
   
   console.log('🏠 老娘領地 會員查詢系統 v2.0');
   console.log('📌 GAS URL:', GAS_URL);
+}
+
+// 執行初始化
+init();
 </script>
 
 </body>
