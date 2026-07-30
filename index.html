@@ -1534,46 +1534,47 @@ function loadMemberDetailWithDate(memberId, startDate, endDate) {
             showEmptyState('⚠️', '載入失敗，請稍後再試');
         });
 }
-  // ================================================================
-  //  3. 集點資料（彙總）
-  // ================================================================
-  
-  function renderPoints(container, member) {
+ // ================================================================
+//  3. 點數資產（彙總）- 完整版
+// ================================================================
+
+function renderPoints(container, member) {
     if (!member) {
-      container.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span><p>無點數資料</p></div>';
-      return;
+        container.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span><p>無點數資料</p></div>';
+        return;
     }
     
-    // 🔥 計算方式
-    var totalPoints = Number(member.totalPoints || 0);           // H欄：累積總點數
-    var referralPoints = Number(member.referralPoints || 0);     // Z欄：推薦點數
-    var personalPoints = totalPoints - referralPoints;           // 累計個人點數 = H欄 - Z欄
-    var currentPoints = Number(member.currentPoints || 0);       // I欄：目前剩餘點
-    var expiringPersonal = Number(member.expiringPersonal || 0); // AD欄：本月到期個人點數
-    var expiringReferral = Number(member.expiringReferral || 0); // AE欄：本月到期推薦點數
-    
-    var percent = totalPoints > 0 ? Math.min((currentPoints / totalPoints) * 100, 100) : 0;
+    // 🔥 計算各項點數
+    var totalPoints = Number(member.totalPoints || 0);              // 累積總點數
+    var referralPoints = Number(member.referralPoints || 0);        // 推薦點數
+    var personalPoints = totalPoints - referralPoints;              // 累計個人點數
+    var currentPoints = Number(member.currentPoints || 0);          // 目前剩餘點數
+    var redeemedPoints = totalPoints - currentPoints;               // 已折抵點數
+    var expiringPersonal = Number(member.expiringPersonal || 0);    // 本月到期個人點數
+    var expiringReferral = Number(member.expiringReferral || 0);    // 本月到期推薦點數
     
     var html = '';
     
     // ============================================================
-    //  彙總卡片（4 個）
+    //  彙總卡片（6 個）
     // ============================================================
     html += '<div class="points-summary">';
     
     var items = [
-      { label: '累計個人點數', value: personalPoints.toLocaleString() },
-      { label: '累計推薦點數', value: referralPoints.toLocaleString() },
-      { label: '本月到期個人點數', value: expiringPersonal.toLocaleString() },
-      { label: '本月到期推薦點數', value: expiringReferral.toLocaleString() }
+        { label: '📊 累積總點數', value: totalPoints.toLocaleString() },
+        { label: '💰 目前剩餘點數', value: currentPoints.toLocaleString() },
+        { label: '📊 累計個人點數', value: personalPoints.toLocaleString() },
+        { label: '📊 累計推薦點數', value: referralPoints.toLocaleString() },
+        { label: '🔄 已折抵點數', value: redeemedPoints.toLocaleString() },
+        { label: '⏰ 本月到期點數', value: (expiringPersonal + expiringReferral).toLocaleString() }
     ];
     
     for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      html += '<div class="points-card">';
-      html += '<div class="number">' + item.value + '</div>';
-      html += '<div class="label">' + item.label + '</div>';
-      html += '</div>';
+        var item = items[i];
+        html += '<div class="points-card">';
+        html += '<div class="number">' + item.value + '</div>';
+        html += '<div class="label">' + item.label + '</div>';
+        html += '</div>';
     }
     
     html += '</div>';
@@ -1581,13 +1582,15 @@ function loadMemberDetailWithDate(memberId, startDate, endDate) {
     // ============================================================
     //  使用進度條
     // ============================================================
+    var percent = totalPoints > 0 ? Math.min(Math.round((currentPoints / totalPoints) * 100), 100) : 0;
+    
     html += '<div style="margin-top:12px;background:#ffffff;padding:14px 16px;border-radius:10px;border:1px solid #f0ebe6;">';
-    html += '<div class="bar-label">';
-    html += '<span>已使用點數</span>';
+    html += '<div class="bar-label" style="display:flex;justify-content:space-between;font-size:14px;">';
+    html += '<span>已使用點數比例</span>';
     html += '<span>' + Math.round(percent) + '%</span>';
     html += '</div>';
-    html += '<div class="points-bar">';
-    html += '<div class="points-bar-fill" style="width:' + percent + '%;"></div>';
+    html += '<div class="points-bar" style="width:100%;height:8px;background:#f0ebe6;border-radius:4px;margin-top:6px;">';
+    html += '<div class="points-bar-fill" style="width:' + percent + '%;height:100%;background:#8b6b4d;border-radius:4px;"></div>';
     html += '</div>';
     html += '</div>';
     
