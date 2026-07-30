@@ -941,6 +941,11 @@
         <p>請先搜尋會員</p>
       </div>
     </div>
+
+    <!-- 🔥 隱藏日期輸入（供 JavaScript 使用） -->
+<input type="date" id="filterStartDate" style="display:none;">
+<input type="date" id="filterEndDate" style="display:none;">
+
     
   </div>
 </div>
@@ -1289,8 +1294,7 @@ function forceLogout() {
   //  載入會員詳細資料
   // ================================================================
   
-  function loadMemberDetail(memberId) {
-    // 🔥 預設最近 2 個月
+function loadMemberDetail(memberId) {
     var today = new Date();
     var twoMonthsAgo = new Date(today);
     twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
@@ -1298,13 +1302,14 @@ function forceLogout() {
     var startDate = twoMonthsAgo.toISOString().split('T')[0];
     var endDate = today.toISOString().split('T')[0];
     
-    // 設定日期選擇器的預設值
-    document.getElementById('filterStartDate').value = startDate;
-    document.getElementById('filterEndDate').value = endDate;
+    // 🔥 加入防錯檢查
+    var startEl = document.getElementById('filterStartDate');
+    var endEl = document.getElementById('filterEndDate');
+    if (startEl) startEl.value = startDate;
+    if (endEl) endEl.value = endDate;
     
     loadMemberDetailWithDate(memberId, startDate, endDate);
 }
-  
   // ================================================================
   //  渲染：Tab 內容
   // ================================================================
@@ -1477,21 +1482,26 @@ function forceLogout() {
 // ================================================================
 
 function applyDateFilter() {
-    var startDate = document.getElementById('filterStartDate').value;
-    var endDate = document.getElementById('filterEndDate').value;
+    var startEl = document.getElementById('filterStartDate');
+    var endEl = document.getElementById('filterEndDate');
+    
+    var startDate = startEl ? startEl.value : '';
+    var endDate = endEl ? endEl.value : '';
     
     if (!currentMemberId) {
         showToast('請先選擇會員');
         return;
     }
     
-    // 重新載入會員詳細（帶入日期區間）
     loadMemberDetailWithDate(currentMemberId, startDate, endDate);
 }
 
 function resetDateFilter() {
-    document.getElementById('filterStartDate').value = '';
-    document.getElementById('filterEndDate').value = '';
+    var startEl = document.getElementById('filterStartDate');
+    var endEl = document.getElementById('filterEndDate');
+    
+    if (startEl) startEl.value = '';
+    if (endEl) endEl.value = '';
     
     if (currentMemberId) {
         loadMemberDetailWithDate(currentMemberId, '', '');
