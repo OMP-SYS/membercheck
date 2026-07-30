@@ -1019,7 +1019,8 @@
     loginBtn.textContent = '登入中...';
     hideLoginError();
     
-    var url = GAS_URL + '?action=staffLogin&account=' + encodeURIComponent(account) + '&password=' + encodeURIComponent(password);
+    // 🔥 改用 adminLogin（純帳號+密碼，不綁 LINE UID）
+    var url = GAS_URL + '?action=adminLogin&account=' + encodeURIComponent(account) + '&password=' + encodeURIComponent(password);
     
     fetch(url)
       .then(function(response) { return response.json(); })
@@ -1115,6 +1116,7 @@ loginPasswordInput.addEventListener('blur', function() {
     try {
       var data = JSON.parse(session);
       var url = GAS_URL + '?action=staffLogout&loginId=' + encodeURIComponent(data.loginId);
+      
       fetch(url).catch(function() {});
     } catch(e) {}
   }
