@@ -1290,25 +1290,20 @@ function forceLogout() {
   // ================================================================
   
   function loadMemberDetail(memberId) {
-    showLoading();
+    // 🔥 預設最近 2 個月
+    var today = new Date();
+    var twoMonthsAgo = new Date(today);
+    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
     
-    var url = GAS_URL + '?action=getMemberDetail&memberId=' + encodeURIComponent(memberId);
+    var startDate = twoMonthsAgo.toISOString().split('T')[0];
+    var endDate = today.toISOString().split('T')[0];
     
-    fetch(url)
-      .then(function(response) { return response.json(); })
-      .then(function(result) {
-        if (result.success && result.data) {
-          currentMemberData = result.data.memberData;
-          renderTabContent(currentTab, result.data);
-        } else {
-          showEmptyState('📭', '無法載入會員資料');
-        }
-      })
-      .catch(function(error) {
-        console.error('Load detail error:', error);
-        showEmptyState('⚠️', '載入失敗，請稍後再試');
-      });
-  }
+    // 設定日期選擇器的預設值
+    document.getElementById('filterStartDate').value = startDate;
+    document.getElementById('filterEndDate').value = endDate;
+    
+    loadMemberDetailWithDate(memberId, startDate, endDate);
+}
   
   // ================================================================
   //  渲染：Tab 內容
@@ -1318,22 +1313,23 @@ function forceLogout() {
     var container = tabContent;
     
     switch(tab) {
-      case 'profile':
-        renderProfile(container, data.memberData);
-        break;
-      case 'records':
-        renderRecords(container, data.transactions);
-        break;
-      case 'points':
-        renderPoints(container, data.memberData);
-        break;
-      case 'coupons':
-        renderCoupons(container, data.coupons);
-        break;
-      default:
-        container.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>未知頁面</p></div>';
+        case 'profile':
+            renderProfile(container, data.memberData);
+            break;
+        case 'records':
+            // 🔥 傳遞交易資料
+            renderRecords(container, data.transactions);
+            break;
+        case 'points':
+            renderPoints(container, data.memberData);
+            break;
+        case 'coupons':
+            renderCoupons(container, data.coupons);
+            break;
+        default:
+            container.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>未知頁面</p></div>';
     }
-  }
+}
   
   // ================================================================
   //  1. 會員資料（會員中心）
@@ -1393,71 +1389,140 @@ function forceLogout() {
   // ================================================================
   //  2. 消費紀錄（流水帳紀錄）
   // ================================================================
-  
-  function renderRecords(container, transactions) {
-  if (!transactions || transactions.length === 0) {
-    container.innerHTML = '<div class="empty-state"><span class="empty-icon">🧾</span><p>尚無消費紀錄</p></div>';
-    return;
-  }
-  
-  var html = '';
-  html += '<div class="record-table-wrap">';
-  html += '<table class="record-table">';
-  html += '<thead><tr>';
-  html += '<th>交易日期</th>';
-  html += '<th>分店</th>';
-  html += '<th>分類</th>';
-  html += '<th>消費金額</th>';
-  html += '<th>使用餐券</th>';
-  html += '<th>點數折抵</th>';
-  html += '<th>實際付款</th>';
-  html += '<th>獲得點數</th>';
-  html += '<th>備註</th>';
-  html += '<th>分享回饋</th>';
-  html += '</tr></thead>';
-  html += '<tbody>';
-  
-  for (var i = 0; i < transactions.length; i++) {
-    var t = transactions[i];
-    var dateStr = t.date ? formatDateDisplay(t.date) : '-';
-    
-    // 🔥 點數折抵：有色塊（負數）
-    var redeemDisplay = '-';
-    if (t.redeem && t.redeem > 0) {
-      redeemDisplay = '<span class="points-badge redeem">-' + Number(t.redeem).toLocaleString() + '</span>';
+  function renderRecords(container, transactions, startDate, endDate) {
+    if (!transactions || transactions.length === 0) {
+        container.innerHTML = '<div class="empty-state"><span class="empty-icon">🧾</span><p>尚無消費紀錄</p></div>';
+        return;
     }
     
-    // 🔥 獲得點數：有色塊（正數）
-    var pointsDisplay = '-';
-    if (t.points && t.points > 0) {
-      pointsDisplay = '<span class="points-badge earn">+' + Number(t.points).toLocaleString() + '</span>';
+    var html = '';
+    
+    // ============================================================
+    //  🔥 日期區間篩選器
+    // ============================================================
+    html += '<div class="date-filter" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; align-items:center;">';
+    html += '<div style="display:flex; align-items:center; gap:6px;">';
+    html += '<label style="font-size:13px; color:#8b7a6b; font-weight:500;">📅 開始</label>';
+    html += '<input type="date" id="filterStartDate" style="padding:6px 10px; border:2px solid #e8e0d8; border-radius:8px; font-size:14px; background:white; outline:none;">';
+    html += '</div>';
+    html += '<div style="display:flex; align-items:center; gap:6px;">';
+    html += '<label style="font-size:13px; color:#8b7a6b; font-weight:500;">結束</label>';
+    html += '<input type="date" id="filterEndDate" style="padding:6px 10px; border:2px solid #e8e0d8; border-radius:8px; font-size:14px; background:white; outline:none;">';
+    html += '</div>';
+    html += '<button onclick="applyDateFilter()" style="padding:6px 16px; background:#8b6b4d; color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">🔍 篩選</button>';
+    html += '<button onclick="resetDateFilter()" style="padding:6px 12px; background:#f0ebe6; color:#6b5544; border:none; border-radius:8px; font-size:13px; cursor:pointer;">↺ 重置</button>';
+    html += '<span style="font-size:12px; color:#a08b7a; margin-left:4px;">共 ' + transactions.length + ' 筆</span>';
+    html += '</div>';
+    
+    // ============================================================
+    //  交易表格
+    // ============================================================
+    html += '<div class="record-table-wrap">';
+    html += '<table class="record-table">';
+    html += '<thead><tr>';
+    html += '<th>交易日期</th>';
+    html += '<th>分店</th>';
+    html += '<th>分類</th>';
+    html += '<th>消費金額</th>';
+    html += '<th>使用餐券</th>';
+    html += '<th>點數折抵</th>';
+    html += '<th>實際付款</th>';
+    html += '<th>獲得點數</th>';
+    html += '<th>備註</th>';
+    html += '<th>分享回饋</th>';
+    html += '</tr></thead>';
+    html += '<tbody>';
+    
+    for (var i = 0; i < transactions.length; i++) {
+        var t = transactions[i];
+        var dateStr = t.date ? formatDateDisplay(t.date) : '-';
+        
+        var redeemDisplay = '-';
+        if (t.redeem && t.redeem > 0) {
+            redeemDisplay = '<span class="points-badge redeem">-' + Number(t.redeem).toLocaleString() + '</span>';
+        }
+        
+        var pointsDisplay = '-';
+        if (t.points && t.points > 0) {
+            pointsDisplay = '<span class="points-badge earn">+' + Number(t.points).toLocaleString() + '</span>';
+        }
+        
+        var shareDisplay = '-';
+        if (t.sharePoints && t.sharePoints > 0) {
+            shareDisplay = '<span class="points-badge share">+' + Number(t.sharePoints).toLocaleString() + '</span>';
+        }
+        
+        html += '<tr>';
+        html += '<td>' + dateStr + '</td>';
+        html += '<td>' + (t.branch || '-') + '</td>';
+        html += '<td>' + (t.category || '-') + '</td>';
+        html += '<td class="amount">$' + Number(t.amount || 0).toLocaleString() + '</td>';
+        html += '<td>' + (t.ticket ? '$' + Number(t.ticket).toLocaleString() : '-') + '</td>';
+        html += '<td>' + redeemDisplay + '</td>';
+        html += '<td class="amount">$' + Number(t.actual || 0).toLocaleString() + '</td>';
+        html += '<td>' + pointsDisplay + '</td>';
+        html += '<td>' + (t.note || '-') + '</td>';
+        html += '<td>' + shareDisplay + '</td>';
+        html += '</tr>';
     }
     
-    // 🔥 分享回饋點數：只有本人有推薦人時才顯示（或者 sharePoints > 0 才顯示）
-    // 嗨購沒有推薦人，所以 sharePoints 應該為 0，不顯示
-    var shareDisplay = '-';
-    if (t.sharePoints && t.sharePoints > 0) {
-      // 只有當 sharePoints > 0 才顯示有色塊
-      shareDisplay = '<span class="points-badge share">+' + Number(t.sharePoints).toLocaleString() + '</span>';
+    html += '</tbody></table>';
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+
+// ================================================================
+//  🔥 日期篩選函數（前端）
+// ================================================================
+
+function applyDateFilter() {
+    var startDate = document.getElementById('filterStartDate').value;
+    var endDate = document.getElementById('filterEndDate').value;
+    
+    if (!currentMemberId) {
+        showToast('請先選擇會員');
+        return;
     }
     
-    html += '<tr>';
-    html += '<td>' + dateStr + '</td>';
-    html += '<td>' + (t.branch || '-') + '</td>';
-    html += '<td>' + (t.category || '-') + '</td>';
-    html += '<td class="amount">$' + Number(t.amount || 0).toLocaleString() + '</td>';
-    html += '<td>' + (t.ticket ? '$' + Number(t.ticket).toLocaleString() : '-') + '</td>';
-    html += '<td>' + redeemDisplay + '</td>';
-    html += '<td class="amount">$' + Number(t.actual || 0).toLocaleString() + '</td>';
-    html += '<td>' + pointsDisplay + '</td>';
-    html += '<td>' + (t.note || '-') + '</td>';
-    html += '<td>' + shareDisplay + '</td>';
-    html += '</tr>';
-  }
-  
-  html += '</tbody></table>';
-  html += '</div>';
-  container.innerHTML = html;
+    // 重新載入會員詳細（帶入日期區間）
+    loadMemberDetailWithDate(currentMemberId, startDate, endDate);
+}
+
+function resetDateFilter() {
+    document.getElementById('filterStartDate').value = '';
+    document.getElementById('filterEndDate').value = '';
+    
+    if (currentMemberId) {
+        loadMemberDetailWithDate(currentMemberId, '', '');
+    }
+}
+
+function loadMemberDetailWithDate(memberId, startDate, endDate) {
+    showLoading();
+    
+    var url = GAS_URL + '?action=getMemberDetail&memberId=' + encodeURIComponent(memberId);
+    if (startDate) {
+        url += '&startDate=' + encodeURIComponent(startDate);
+    }
+    if (endDate) {
+        url += '&endDate=' + encodeURIComponent(endDate);
+    }
+    
+    fetch(url)
+        .then(function(response) { return response.json(); })
+        .then(function(result) {
+            if (result.success && result.data) {
+                currentMemberData = result.data.memberData;
+                renderTabContent(currentTab, result.data);
+            } else {
+                showEmptyState('📭', '無法載入會員資料');
+            }
+        })
+        .catch(function(error) {
+            console.error('Load detail error:', error);
+            showEmptyState('⚠️', '載入失敗，請稍後再試');
+        });
 }
   // ================================================================
   //  3. 集點資料（彙總）
