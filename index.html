@@ -421,7 +421,33 @@
       font-size: 18px;
       color: #b8957a;
     }
-    
+    /* 🔥 右側：更新時間 + 箭頭 */
+.member-list-item .info-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.member-list-item .info-right .update-time-label {
+    font-size: 11px;
+    color: #a08b7a;
+    font-weight: 500;
+}
+
+.member-list-item .info-right .update-time-value {
+    font-size: 13px;
+    color: #ff9800;
+    font-weight: 600;
+}
+
+.member-list-item .info-right .arrow {
+    font-size: 18px;
+    color: #b8957a;
+    margin-top: 4px;
+}
     .no-result {
       text-align: center;
       padding: 30px 20px;
@@ -1237,10 +1263,10 @@ function forceLogout() {
             if (result.success && result.members && result.members.length > 0) {
                 searchResults = result.members;
                 
-                // 🔥 儲存最後同步時間（給 renderMemberList 用）
-                window.lastSyncTime = result.lastSyncTime || '--';
+                // 🔥 取得最後同步時間（從 GAS 回傳）
+                var lastSyncTime = result.lastSyncTime || '--';
                 
-                renderMemberList(result.members);
+                renderMemberList(result.members, lastSyncTime);
                 resultCount.textContent = result.members.length;
                 searchResultInfo.className = 'search-result-info show';
                 
@@ -1259,7 +1285,7 @@ function forceLogout() {
             console.error('Search error:', error);
         });
 }
- function renderMemberList(members) {
+ function renderMemberList(members, lastSyncTime) {
     var html = '';
     for (var i = 0; i < members.length; i++) {
         var m = members[i];
@@ -1274,9 +1300,10 @@ function forceLogout() {
         }
         html += '</div>';
         
-        // 🔥 右側：最後同步時間 + 箭頭
+        // 🔥 右側：最後同步時間（分成兩行）
         html += '<div class="info-right">';
-        html += '<div class="update-time">⏱️ ' + (window.lastSyncTime || '--') + '</div>';
+        html += '<div class="update-time-label">📅 資料更新至：</div>';
+        html += '<div class="update-time-value">' + (lastSyncTime || '--') + '</div>';
         html += '<span class="arrow">›</span>';
         html += '</div>';
         
