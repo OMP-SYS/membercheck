@@ -1210,13 +1210,13 @@ function forceLogout() {
   //  搜尋會員
   // ================================================================
   
-  function doSearch() {
+ function doSearch() {
     var name = searchName.value.trim();
     var phone = searchPhone.value.trim();
     
     if (!name && !phone) {
-      showEmptyState('🔍', '請輸入姓名或電話');
-      return;
+        showEmptyState('🔍', '請輸入姓名或電話');
+        return;
     }
     
     searchBtn.disabled = true;
@@ -1229,51 +1229,61 @@ function forceLogout() {
     var url = GAS_URL + '?action=searchMember&name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone);
     
     fetch(url)
-      .then(function(response) { return response.json(); })
-      .then(function(result) {
-        searchBtn.disabled = false;
-        searchBtn.textContent = '🔍 查詢';
-        
-        if (result.success && result.members && result.members.length > 0) {
-          searchResults = result.members;
-          renderMemberList(result.members);
-          resultCount.textContent = result.members.length;
-          searchResultInfo.className = 'search-result-info show';
-          
-          // 自動選取第一筆
-          selectMember(result.members[0]);
-        } else {
-          searchResults = [];
-          memberList.innerHTML = '<div class="no-result"><span class="icon">😕</span><p>' + (result.message || '查無會員') + '</p></div>';
-          searchResultInfo.className = 'search-result-info';
-          showEmptyState('🔍', '請重新搜尋');
-        }
-      })
-      .catch(function(error) {
-        searchBtn.disabled = false;
-        searchBtn.textContent = '🔍 查詢';
-        memberList.innerHTML = '<div class="no-result"><span class="icon">⚠️</span><p>網路連線錯誤</p></div>';
-        console.error('Search error:', error);
-      });
-  }
-  
-  function renderMemberList(members) {
+        .then(function(response) { return response.json(); })
+        .then(function(result) {
+            searchBtn.disabled = false;
+            searchBtn.textContent = '🔍 查詢';
+            
+            if (result.success && result.members && result.members.length > 0) {
+                searchResults = result.members;
+                
+                // 🔥 儲存最後同步時間（給 renderMemberList 用）
+                window.lastSyncTime = result.lastSyncTime || '--';
+                
+                renderMemberList(result.members);
+                resultCount.textContent = result.members.length;
+                searchResultInfo.className = 'search-result-info show';
+                
+                selectMember(result.members[0]);
+            } else {
+                searchResults = [];
+                memberList.innerHTML = '<div class="no-result"><span class="icon">😕</span><p>' + (result.message || '查無會員') + '</p></div>';
+                searchResultInfo.className = 'search-result-info';
+                showEmptyState('🔍', '請重新搜尋');
+            }
+        })
+        .catch(function(error) {
+            searchBtn.disabled = false;
+            searchBtn.textContent = '🔍 查詢';
+            memberList.innerHTML = '<div class="no-result"><span class="icon">⚠️</span><p>網路連線錯誤</p></div>';
+            console.error('Search error:', error);
+        });
+}
+ function renderMemberList(members) {
     var html = '';
     for (var i = 0; i < members.length; i++) {
-      var m = members[i];
-      html += '<div class="member-list-item" data-id="' + m.memberId + '" onclick="selectMemberById(\'' + m.memberId + '\')">';
-      html += '<div class="info">';
-      html += '<div class="name">' + (m.name || '-') + '</div>';
-      html += '<div class="phone">📱 ' + (m.phone || '-') + '</div>';
-      if (m.birthday) {
-        html += '<div class="meta">🎂 ' + m.birthday + '</div>';
-      }
-      html += '</div>';
-      html += '<span class="arrow">›</span>';
-      html += '</div>';
+        var m = members[i];
+        html += '<div class="member-list-item" data-id="' + m.memberId + '" onclick="selectMemberById(\'' + m.memberId + '\')">';
+        
+        // 左側：會員資訊
+        html += '<div class="info">';
+        html += '<div class="name">' + (m.name || '-') + '</div>';
+        html += '<div class="phone">📱 ' + (m.phone || '-') + '</div>';
+        if (m.birthday) {
+            html += '<div class="meta">🎂 ' + m.birthday + '</div>';
+        }
+        html += '</div>';
+        
+        // 🔥 右側：最後同步時間 + 箭頭
+        html += '<div class="info-right">';
+        html += '<div class="update-time">⏱️ ' + (window.lastSyncTime || '--') + '</div>';
+        html += '<span class="arrow">›</span>';
+        html += '</div>';
+        
+        html += '</div>';
     }
     memberList.innerHTML = html;
-  }
+}
   
   function selectMemberById(memberId) {
     for (var i = 0; i < searchResults.length; i++) {
